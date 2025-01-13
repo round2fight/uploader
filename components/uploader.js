@@ -16,7 +16,8 @@ const FileUpload = () => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const serverUrl = "http://127.0.0.1:5000/upload"; // Replace with your server URL
+  // http://127.0.0.1:5000/upload
+  const serverUrl = process.env.NEXT_PUBLIC_API_SERVER_URL + "upload"; // Replace with your server URL
 
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles.length === 0) {
