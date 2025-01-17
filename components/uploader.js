@@ -1,55 +1,107 @@
 import React, { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
 import axios from "axios";
+import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
 const FileUpload = () => {
   const [files, setFiles] = useState([]);
   const [folderName, setFolderName] = useState("");
-  const [currentJobID, setCurrentJobID] = useState("");
-  const [uploading, setUploading] = useState(false);
-
-  const [isUploadSuccess, setIsUploadSuccess] = useState(false);
-
-  const [username, setUsername] = useState("");
+  const [description, setDescription] = useState("");
   const [companyName, setCompanyName] = useState("");
-
+  const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploadSuccess, setIsUploadSuccess] = useState(null);
+  // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
+  const serverUrl = "https://meowsician.shop/api/upload";
 
-  // http://127.0.0.1:5000/upload
-  const serverUrl = "http://192.168.0.111/api/upload"; // Replace with your server URL
-
+  // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
-    if (acceptedFiles.length === 0) {
-      alert("No files detected. Please upload a folder.");
-      return;
-    }
-    if (acceptedFiles.length > 0) {
-      let extractedFolderName = "";
-
-      // Check if files contain webkitRelativePath (drag-and-drop folder)
-      const fileWithPath = acceptedFiles.find(
-        (file) => file.webkitRelativePath
-      );
-      if (fileWithPath) {
-        const filePath = fileWithPath.webkitRelativePath;
-        extractedFolderName = filePath.split("/")[0]; // Extract folder name
-      } else {
-        // Handle cases where files are uploaded via click (no folder info)
-        const firstFile = acceptedFiles[0];
-        extractedFolderName = firstFile.path?.split("/")[1] || "Unknown Folder"; // Try extracting based on path
-      }
-
-      setFolderName(extractedFolderName);
-    }
-    console.log("Accepted Files:", acceptedFiles);
-    setFiles(acceptedFiles);
+    processFiles(acceptedFiles);
   };
 
+  const processFiles = (acceptedFiles) => {
+    if (acceptedFiles.length === 0) {
+      alert("No files detected. Please upload files or a folder.");
+      return;
+    }
+
+    let extractedFolderName = "Uploaded_Files"; // Default folder name
+
+    // Detect folder name if available
+    const fileWithPath = acceptedFiles.find((file) => file.webkitRelativePath);
+    if (fileWithPath) {
+      extractedFolderName = fileWithPath.webkitRelativePath.split("/")[0];
+    }
+
+    setFolderName(extractedFolderName);
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]); // Append accepted files
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/png": [],
+      "image/jpeg": [],
+      "image/jpg": [],
+      "text/plain": [],
+      "application/msword": [],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [],
+    },
+    multiple: true,
+  });
+
+  // Handle manual file selection
+  const handleFileUpload = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+
+    // Filter only valid files (images, text, and word documents)
+    const validFiles = selectedFiles.filter(isValidFile);
+
+    if (validFiles.length === 0) {
+      alert(
+        "No valid files found. Only images (.png, .jpg, .jpeg, .gif), text files (.txt), and Word files (.doc, .docx) are allowed."
+      );
+      return;
+    }
+
+    setFiles((prevFiles) => [...prevFiles, ...validFiles]); // Append only valid files
+  };
+
+  // Handle manual folder selection
+  const handleFolderUpload = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+
+    // Filter only valid files (images, text, and word documents)
+    const validFiles = selectedFiles.filter(isValidFile);
+
+    if (validFiles.length === 0) {
+      alert(
+        "No valid files found in the folder. Only images (.png, .jpg, .jpeg, .gif), text files (.txt), and Word files (.doc, .docx) are allowed."
+      );
+      return;
+    }
+
+    // Update the files state and maintain folder structure
+    setFiles((prevFiles) => [...prevFiles, ...validFiles]); // Append valid files
+  };
+  // Validate file type
+  const isValidFile = (file) => {
+    const validTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "text/plain",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    return validTypes.includes(file.type);
+  };
+
+  // Upload files to server
   const uploadFiles = async () => {
-    if (!username || !companyName) {
-      alert("Please enter both name and company name.");
-      setUploading(false);
+    if (!description || !companyName) {
+      alert("Please enter both description and company name.");
       return;
     }
 
@@ -70,54 +122,24 @@ const FileUpload = () => {
     )}_${String(timestamp.getMinutes()).padStart(2, "0")}`;
 
     const pid = `job_${Date.now()}`;
-    // Combine the date, time, and folder name
-    const newFolderName = `${formattedDate}/${formattedTime}_${pid}_${folderName}`;
+    const newFolderName = `${formattedDate}/${formattedTime}_${companyName}_${pid}`;
 
     const formData = new FormData();
+    formData.append("newFolderName", newFolderName); // Send folder name
 
-    // Append files with the new folder structure
     files.forEach((file) => {
-      const relativePath = file.webkitRelativePath || file.path;
-
-      const newPath = `${newFolderName}/${relativePath
-        .split("/")
-        .slice(1)
-        .join("/")}`;
-
-      // Append the file to the FormData with the desired folder path
-      formData.append("files", file, newPath);
+      const relativePath = file.webkitRelativePath || file.name; // Preserve folder structure
+      formData.append("files", file, relativePath);
     });
 
-    setCurrentJobID(pid);
-
-    // Add user_info.txt to files
-    const userInfoContent = `Username: ${username}\nCompany: ${companyName}\nJob_ID: ${pid}`;
+    // Generate user_info.txt
+    const userInfoContent = `Company: ${companyName}\nDescription: ${description}\nJob_ID: ${pid}`;
     const userInfoBlob = new Blob([userInfoContent], { type: "text/plain" });
-
-    const userInfoFilename = `user_info_${pid}.txt`;
-
-    const userInfoFile = new File([userInfoBlob], userInfoFilename, {
+    const userInfoFile = new File([userInfoBlob], `user_info_${pid}.txt`, {
       type: "text/plain",
     });
-    formData.append(
-      "files",
-      userInfoFile,
-      `${newFolderName}/${userInfoFilename}`
-    );
 
-    // console.log("Folder Name:", newFolderName);
-    // console.log("FormData:", formData);
-    // console.log("Files:", files);
-
-    // for (let pair of formData.entries()) {
-    //   console.log("meow", pair[0] + ": " + pair[1]);
-    // }
-
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(`isse` + `${key}:`, value);
-    // }
-
-    // setUploading(false);
+    formData.append("files", userInfoFile, `user_info_${pid}.txt`);
 
     try {
       const response = await axios.post(serverUrl, formData, {
@@ -129,11 +151,17 @@ const FileUpload = () => {
           setUploadProgress(percentCompleted);
         },
       });
+
       console.log("Upload successful:", response.data);
       setIsUploadSuccess(true);
     } catch (error) {
-      console.error("Error uploading files:", error);
-      alert("Error uploading files. Please try again leter.");
+      if (error.message === "Network Error") {
+        console.error("Network Error - Server might be down");
+        // alert("The server is currently unavailable. Please try again later.");
+      } else {
+        console.error("Error uploading files:", error);
+        // alert("Error uploading files. Please try again later.");
+      }
       setIsUploadSuccess(false);
     } finally {
       setUploading(false);
@@ -141,219 +169,316 @@ const FileUpload = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("Files", files);
+  }, [files]);
+
   const cancelUpload = () => {
-    setFiles([]);
-    setFolderName("");
-    setUsername("");
-    setCompanyName("");
-    setUploading(false);
-    setUploadProgress(0);
-    setIsUploadSuccess(false);
-    setCurrentJobID("");
+    setFiles([]); // Clear the files array
+    setDescription(""); // Clear the description
+    setCompanyName(""); // Clear the company name
+    setUploading(false); // Reset uploading state
+    setUploadProgress(0); // Reset upload progress
+    setIsUploadSuccess(null); // Reset success/failure status
+    window.location.reload(); // Refresh the page
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "image/png": [],
-      "image/jpeg": [],
-      "image/jpg": [],
-      "text/plain": [],
-      "application/msword": [], // .doc files
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        [], // .docx files
-    },
-    directory: true,
-  });
-
-  useEffect(() => {
-    console.log(folderName);
-  }, [folderName]);
-
   return (
-    <div className="bg-gray-700 bg-opacity-75 dark:bg-gray-300 dark:bg-opacity-90 m-4 p-6 rounded-lg shadow-lg">
+    // bg-opacity-75
+    <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-xl">
       <div className="flex items-center justify-center mb-4">
-        <Image
-          src="/UdayDigital.png" // Path to your logo in the public folder
-          alt="Logo"
-          width={300} // Set the width of your logo
-          height={50} // Set the height of your logo
-        />
+        <Image src="/Uday4.png" alt="Logo" width={300} height={50} />
       </div>
-
-      {!!files && files.length > 0 ? (
-        <>
-          {!!isUploadSuccess ? (
-            <>
-              <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-green-100 border border-green-400 shadow-lg">
-                <div className="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-green-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span className="text-green-700 font-semibold text-lg">
-                    Upload Successful!
-                  </span>
-                </div>
-
-                <div className="mt-2 text-gray-700 text-center">
-                  <div>
-                    {" "}
-                    We’ve received your photos and will start printing them
-                    right away.
-                  </div>
-                  We’ll contact you via email or phone if we need additional
-                  information.
-                </div>
-                <p className="mt-2 font-medium text-gray-800">
-                  Your Job ID:{" "}
-                  <span className="text-blue-600">{currentJobID}</span>
-                </p>
-                <p className="mt-2 text-sm text-gray-600">
-                  Please keep this Job ID handy for future reference.
-                </p>
-              </div>
-              <div className="flex justify-center ">
-                <button
-                  onClick={cancelUpload}
-                  disabled={uploading}
-                  className={`mt-4 px-4 py-2 rounded bg-gray-500 text-white font-semibold ${
-                    uploading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-400"
-                  }`}
-                >
-                  Go Back
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              {!!folderName && (
-                <div className="mt-2 text-gray-600">
-                  {/* Selected Folder:{" "} */}
-                  <div className="font-semibold text-gray-600">
-                    {folderName}
-                  </div>
-                </div>
-              )}
-              <div className="mt-1 text-gray-600">
-                {/* Selected Files:{" "} */}
-                <ul className="list-disc list-inside text-gray-600">
-                  {files.map((file, index) => (
-                    <li key={index}>{file.name}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-4">
-                <label className="block text-gray-600">
-                  {/* Username: */}
-                  <input
-                    placeholder="Name"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="block w-full p-2 rounded bg-gray-200"
-                  />
-                </label>
-                <label className="block text-gray-600 mt-4">
-                  {/* Company Name: */}
-                  <input
-                    placeholder="Company Name"
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    className="block w-full p-2 rounded bg-gray-200"
-                  />
-                </label>
-              </div>
-              <div className="mt-4 flex justify-center gap-2">
-                <button
-                  onClick={uploadFiles}
-                  disabled={files.length === 0 || uploading}
-                  className={`px-4 py-2 rounded bg-emerald-700 text-white font-semibold ${
-                    files.length === 0 || uploading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-emerald-600"
-                  }`}
-                >
-                  Upload Files
-                </button>
-
-                <button
-                  onClick={cancelUpload}
-                  disabled={uploading}
-                  className={`px-4 py-2 rounded bg-gray-500 text-white font-semibold ${
-                    uploading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-400"
-                  }`}
-                >
-                  Cancel Upload
-                </button>
-              </div>
-              {uploading && (
-                <div className="w-full bg-gray-300 mt-4 rounded-full">
-                  <div
-                    className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-1 rounded-full"
-                    style={{ width: `${uploadProgress}%` }}
-                  >
-                    {uploadProgress}%
-                  </div>
-                </div>
-              )}{" "}
-            </>
-          )}
-        </>
+      {isUploadSuccess !== null ? (
+        <></>
       ) : (
         <>
-          <div
-            {...getRootProps()}
-            className={`flex flex-col items-center justify-center rounded-md p-3 cursor-pointer transition border-2 ${
-              isDragActive
-                ? "border-dashed border-blue-500 bg-blue-200"
-                : "border-dashed border-gray-400 bg-gray-300"
-            }`}
-          >
-            <input {...getInputProps()} webkitdirectory="" />
-            <div className="text-gray-600 text-center">
-              {isDragActive ? (
-                <>
-                  <div>.</div>
-                  <div>Drag the folder here</div>
-                  <div>.</div>
-                </>
-              ) : (
-                <>
-                  <div>Drag & drop a folder here</div>
-                  <div>or</div>
-                  <div> click to select one</div>
-                </>
-              )}
-            </div>
+          {/* Username & Company Name Input */}
+          <input
+            type="text"
+            placeholder="Enter Company Name"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            className="p-2 rounded-lg shadow-md w-full mb-2 dark:bg-slate-800 border dark:border-slate-700 border-gray-300 focus:border-slate-200  focus:ring-1 focus:ring-slate-500 outline-none"
+          />
+          <div className="mb-2">
+            <textarea
+              placeholder="Enter Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="p-2 rounded-lg shadow-md w-full dark:bg-slate-800 border dark:border-slate-700 focus:border-slate-200 focus:ring-1 focus:ring-slate-500 outline-none"
+            />
           </div>
 
-          <div className=" text-gray-600 text-center mt-2">
-            By uploading images, you agree that these images will be used for
-            printing purposes.
+          {/* Drag-and-Drop & File Selection */}
+          <div
+            {...getRootProps()}
+            className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-2  shadow-md w-full min-h-60 ${
+              isDragActive
+                ? "border-dashed dark:border-slate-400 dark:bg-slate-700 border-sky-500 bg-violet-50"
+                : "border-dashed dark:bg-slate-800 border dark:border-slate-700 border-sky-400 bg-white"
+            }`}
+          >
+            <input {...getInputProps()} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="100"
+              height="100"
+              viewBox="0 0 100 100"
+            >
+              <path
+                fill="#c9dcf4"
+                d="m71.99,88.11c-14.66,1.19-29.31,1.19-43.97,0-3.67-.3-6.52-3.29-6.71-6.96-1.04-20.43-1.04-40.86,0-61.3.19-3.68,3.05-6.66,6.72-6.96,9.87-.8,19.74-1.06,29.62-.78,2.13.06,4.14.98,5.62,2.52,4.46,4.66,9.01,9.34,13.6,13.94,1.47,1.47,2.33,3.45,2.39,5.53.43,15.69.24,31.37-.55,47.06-.19,3.67-3.04,6.66-6.71,6.96Z"
+              ></path>
+              <path
+                fill="#4a254b"
+                d="m50,73c2.57,0,4.68-1.94,4.97-4.43.03-.3-.19-.57-.49-.57-1.73,0-7.22,0-8.95,0-.3,0-.53.27-.49.57.28,2.49,2.4,4.43,4.97,4.43Z"
+              ></path>
+              <circle cx="39.5" cy="61.5" r="5.5" fill="#fff"></circle>
+              <circle cx="39.5" cy="61.5" r="2.5" fill="#4a254b"></circle>
+              <circle cx="60.5" cy="61.5" r="5.5" fill="#fff"></circle>
+              <circle cx="60.5" cy="61.5" r="2.5" fill="#4a254b"></circle>
+              <path
+                fill="#6b96d6"
+                d="m68.63,31.42h10.08c-.41-1.06-1.03-2.04-1.85-2.87-4.58-4.6-9.13-9.28-13.6-13.94-.9-.94-2-1.64-3.21-2.07l.02,10.32c.01,4.72,3.84,8.54,8.56,8.54Z"
+              ></path>
+            </svg>
+            <div className="text-gray-400 text-sm text-center flex justify-center">
+              Drag & drop your files here or&nbsp;<u>click here</u>
+            </div>
+            {/* <div>
+          <button className="w-full m-1 py-2 px-4 rounded-xl cursor-pointer border-2 flex items-center justify-center gap-2 text-center shadow-sm border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600">
+            <span>Click here</span>
+          </button>
+        </div> */}
           </div>
-          <div className="text-gray-600 text-center">
-            <a href="/terms-and-conditions" className="text-blue-400 underline">
-              Read our Terms and Conditions
-            </a>
+
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <div class="col-span-2 flex justify-center">
+              <label
+                htmlFor="folder-upload"
+                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-800  dark:border-slate-700 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+              >
+                Attach Folder
+              </label>
+              <input
+                id="folder-upload"
+                type="file"
+                webkitdirectory=""
+                directory=""
+                multiple
+                onChange={handleFolderUpload}
+                className="hidden"
+              />
+            </div>
+
+            {/* <div class="col-span-2  flex justify-center">
+          <label
+            htmlFor="file-upload"
+            className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 flex items-center justify-center gap-2 text-center shadow-sm border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600"
+          >
+            <span>Attach Files</span>
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            multiple
+            accept=".png,.jpg,.jpeg,.gif,.txt,.doc,.docx" // Restrict to allowed file types
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+        </div> */}
+
+            <div class="col-span-2">
+              {files.length > 0 && (
+                <div className="mt-1 space-y-2">
+                  {Array.from(
+                    new Set(
+                      files
+                        .filter((file) => file.webkitRelativePath)
+                        .map((file) => file.webkitRelativePath.split("/")[0])
+                    )
+                  ).map((folderName, index) => (
+                    <div
+                      key={index}
+                      className=" dark:bg-amber-600 dark:text-amber-100 bg-amber-100 border border-amber-400 text-gray-600 px-4 py-2 rounded-md shadow-md text-sm flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 48 48"
+                      >
+                        <path
+                          fill="#FFA000"
+                          d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z"
+                        ></path>
+                        <path
+                          fill="#FFCA28"
+                          d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z"
+                        ></path>
+                      </svg>
+                      <span>{folderName}</span>
+                    </div>
+                  ))}
+
+                  {Array.from(
+                    new Set(
+                      files
+                        .filter((file) => !file.webkitRelativePath)
+                        .map((file) => file.name)
+                    )
+                  ).map((fileName, index) => (
+                    <div
+                      key={index}
+                      className="dark:bg-sky-700 dark:text-sky-100 bg-sky-100 border border-sky-300 text-gray-600 px-4 py-2 rounded-md shadow-md text-sm flex items-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="20"
+                        viewBox="0 0 48 48"
+                      >
+                        <path
+                          fill="#90CAF9"
+                          d="M40 45L8 45 8 3 30 3 40 13z"
+                        ></path>
+                        <path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"></path>
+                      </svg>
+                      <span>{fileName}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              {!uploading && (
+                <button
+                  className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-800  dark:border-slate-700 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                  onClick={cancelUpload}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+            <div>
+              <button
+                className={`px-4 py-3 rounded-xl text-white w-full disabled:bg-gray-200 dark:disabled:bg-slate-500 dark:disabled:text-gray-00 disabled:text-gray-400 ${
+                  uploading
+                    ? "bg-gray-500 dark:bg-slate-500 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                }`}
+                onClick={uploadFiles}
+                disabled={
+                  uploading ||
+                  files.length === 0 ||
+                  !description ||
+                  !companyName
+                }
+              >
+                {uploading
+                  ? `Uploading (${uploadProgress}%)...`
+                  : "Upload Files"}
+              </button>
+            </div>
           </div>
         </>
       )}
+      <div className="mt-4  flex flex-col justify-center items-center">
+        {/* Upload Status */}
+        {isUploadSuccess !== null && (
+          <div
+            className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-3xl p-6 flex flex-col justify-center items-center ${
+              isUploadSuccess
+                ? "dark:bg-slate-800 border dark:border-slate-700 dark:text-sky-100 bg-white text-gray-800"
+                : "dark:bg-slate-800 border dark:border-slate-700 dark:text-sky-100 bg-white text-gray-800"
+            } text-white`}
+          >
+            {isUploadSuccess ? (
+              <>
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    x="0px"
+                    y="0px"
+                    width="100"
+                    height="100"
+                    viewBox="0 0 48 48"
+                  >
+                    <path
+                      fill="#4caf50"
+                      d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                    ></path>
+                    <path
+                      fill="#ccff90"
+                      d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
+                    ></path>
+                  </svg>
+                </div>
+                <div className="font-bold"> Upload Successful! </div>
+                <div>
+                  {" "}
+                  We&rsquo;ve received your files and will be in touch soon with
+                  the next steps.{" "}
+                </div>
+                Thank you for choosing us!
+                <div>
+                  {!uploading && (
+                    <button
+                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-700  dark:border-slate-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                      onClick={cancelUpload}
+                    >
+                      Go back
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    x="0px"
+                    y="0px"
+                    width="100"
+                    height="100"
+                    viewBox="0 0 48 48"
+                  >
+                    <path
+                      fill="#f44336"
+                      d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                    ></path>
+                    <path
+                      fill="#fff"
+                      d="M29.656,15.516l2.828,2.828l-14.14,14.14l-2.828-2.828L29.656,15.516z"
+                    ></path>
+                    <path
+                      fill="#fff"
+                      d="M32.484,29.656l-2.828,2.828l-14.14-14.14l2.828-2.828L32.484,29.656z"
+                    ></path>
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-center">Oops! Something went wrong.</div>
+                  Please try again later. We apologize for the inconvenience.
+                </div>
+                <div>
+                  {!uploading && (
+                    <button
+                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-700  dark:border-slate-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                      onClick={cancelUpload}
+                    >
+                      Go back
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

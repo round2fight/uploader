@@ -19,13 +19,7 @@ const geistMono = Geist_Mono({
 export default function Home() {
   return (
     <div className="relative h-screen ">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/background3.jpg')",
-          filter: "brightness(90%)", // Adjust for translucency
-        }}
-      ></div>
+      <div className="absolute inset-0 bg-cover bg-center bg-blue-50 dark:bg-slate-950"></div>
       <div className="relative flex items-center justify-center h-full">
         <FileUpload />
       </div>
