@@ -308,7 +308,7 @@ const FileUpload = () => {
           />
         </div> */}
 
-            <div class="col-span-2 my-2">
+            <div class="col-span-2">
               {files.length > 0 && (
                 <div className="mt-1 space-y-2">
                   {Array.from(
@@ -403,7 +403,7 @@ const FileUpload = () => {
           </div>
         </>
       )}
-      <div className="mt-4  flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center">
         {/* Upload Status */}
         {isUploadSuccess !== null && (
           <div
