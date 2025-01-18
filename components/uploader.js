@@ -210,6 +210,7 @@ const FileUpload = () => {
       ) : (
         <>
           {/* Username & Company Name Input */}
+
           <input
             type="text"
             placeholder="Enter Company Name"
@@ -276,7 +277,7 @@ const FileUpload = () => {
             <div class="col-span-2 flex justify-center">
               <label
                 htmlFor="folder-upload"
-                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 "
+                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-blue-100 hover:text-gray-600 "
               >
                 Attach Folder
               </label>
@@ -374,7 +375,7 @@ const FileUpload = () => {
             <div className="col-span-1">
               {!uploading && (
                 <button
-                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 "
+                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Cancel
@@ -408,7 +409,7 @@ const FileUpload = () => {
         {/* Upload Status */}
         {isUploadSuccess !== null && (
           <div
-            className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-3xl p-6 flex flex-col justify-center items-center ${
+            className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-xl p-6 flex flex-col justify-center items-center ${
               isUploadSuccess
                 ? "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white text-gray-800 "
                 : "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white text-gray-800 "
@@ -435,22 +436,14 @@ const FileUpload = () => {
                     ></path>
                   </svg>
                 </div>
-                <div className="font-bold"> Upload Successful! </div>
-                <div>
-                  {" "}
-                  We&rsquo;ve received your files and will be in touch soon with
-                  the next steps.{" "}
-                </div>
-                Thank you for choosing us!
-                <div>
-                  {!uploading && (
-                    <button
-                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-zinc-700  dark:border-zinc-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
-                      onClick={cancelUpload}
-                    >
-                      Go back
-                    </button>
-                  )}
+                <div className="text-center text-zinc-500">
+                  <div className="font-bold"> Upload Successful! </div>
+                  <div>
+                    {" "}
+                    We&rsquo;ve received your files and will be in touch soon
+                    with the next steps.{" "}
+                  </div>
+                  Thank you for choosing us!
                 </div>
               </>
             ) : (
@@ -478,22 +471,22 @@ const FileUpload = () => {
                     ></path>
                   </svg>
                 </div>
-                <div>
-                  <div className="text-center">Oops! Something went wrong.</div>
+                <div className="text-center text-zinc-500">
+                  <div>Oops! Something went wrong.</div>
                   Please try again later. We apologize for the inconvenience.
-                </div>
-                <div>
-                  {!uploading && (
-                    <button
-                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-zinc-700  dark:border-zinc-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
-                      onClick={cancelUpload}
-                    >
-                      Go back
-                    </button>
-                  )}
                 </div>
               </>
             )}
+            <div>
+              {!uploading && (
+                <button
+                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
+                  onClick={cancelUpload}
+                >
+                  Go back
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
