@@ -141,8 +141,24 @@ const FileUpload = () => {
 
     formData.append("files", userInfoFile, `user_info_${pid}.txt`);
 
+    // try {
+    //   const response = await axios.get("http://localhost:5000/api/ping");
+    //   alert("Server is up and running");
+    // } catch (error) {
+    //   console.error("Error uploading files:", error);
+    //   if (error.response) {
+    //     console.error("Response error:", error.response);
+    //   } else if (error.request) {
+    //     console.error("Request error:", error.request);
+    //   } else {
+    //     console.error("General error:", error.message);
+    //   }
+    //   alert("Error pinging server. Please try again later.");
+    // }
+
     try {
       const response = await axios.post(serverUrl, formData, {
+        // timeout: 60000,
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
@@ -185,7 +201,7 @@ const FileUpload = () => {
 
   return (
     // bg-opacity-75
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-xl">
+    <div className="bg-white dark:bg-zinc-700 p-6 rounded-xl shadow-lg">
       <div className="flex items-center justify-center mb-4">
         <Image src="/Uday4.png" alt="Logo" width={300} height={50} />
       </div>
@@ -199,14 +215,15 @@ const FileUpload = () => {
             placeholder="Enter Company Name"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="p-2 rounded-lg shadow-md w-full mb-2 dark:bg-slate-800 border dark:border-slate-700 border-gray-300 focus:border-slate-200  focus:ring-1 focus:ring-slate-500 outline-none"
+            //   focus:ring-1 focus:ring-slate-500
+            className="p-2 rounded-lg shadow-md w-full mb-2 border dark:bg-zinc-800 dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
           />
           <div className="mb-2">
             <textarea
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="p-2 rounded-lg shadow-md w-full dark:bg-slate-800 border dark:border-slate-700 focus:border-slate-200 focus:ring-1 focus:ring-slate-500 outline-none"
+              className="p-2 rounded-lg shadow-md w-full border dark:bg-zinc-800 dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
             />
           </div>
 
@@ -215,8 +232,8 @@ const FileUpload = () => {
             {...getRootProps()}
             className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-2  shadow-md w-full min-h-60 ${
               isDragActive
-                ? "border-dashed dark:border-slate-400 dark:bg-slate-700 border-sky-500 bg-violet-50"
-                : "border-dashed dark:bg-slate-800 border dark:border-slate-700 border-sky-400 bg-white"
+                ? "border-dashed dark:border-zinc-400 dark:bg-zinc-600 border-sky-500 bg-violet-50"
+                : "border-dashed dark:bg-zinc-800 border dark:border-zinc-500 border-sky-400 bg-white"
             }`}
           >
             <input {...getInputProps()} />
@@ -245,7 +262,7 @@ const FileUpload = () => {
                 d="m68.63,31.42h10.08c-.41-1.06-1.03-2.04-1.85-2.87-4.58-4.6-9.13-9.28-13.6-13.94-.9-.94-2-1.64-3.21-2.07l.02,10.32c.01,4.72,3.84,8.54,8.56,8.54Z"
               ></path>
             </svg>
-            <div className="text-gray-400 text-sm text-center flex justify-center">
+            <div className="dark:text-zinc-400 text-gray-400 text-sm text-center flex justify-center">
               Drag & drop your files here or&nbsp;<u>click here</u>
             </div>
             {/* <div>
@@ -255,11 +272,11 @@ const FileUpload = () => {
         </div> */}
           </div>
 
-          <div class="grid grid-cols-2 gap-2 mt-4">
+          <div class="grid grid-cols-2 gap-1 mt-2">
             <div class="col-span-2 flex justify-center">
               <label
                 htmlFor="folder-upload"
-                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-800  dark:border-slate-700 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 "
               >
                 Attach Folder
               </label>
@@ -291,7 +308,7 @@ const FileUpload = () => {
           />
         </div> */}
 
-            <div class="col-span-2">
+            <div class="col-span-2 my-2">
               {files.length > 0 && (
                 <div className="mt-1 space-y-2">
                   {Array.from(
@@ -303,12 +320,12 @@ const FileUpload = () => {
                   ).map((folderName, index) => (
                     <div
                       key={index}
-                      className=" dark:bg-amber-600 dark:text-amber-100 bg-amber-100 border border-amber-400 text-gray-600 px-4 py-2 rounded-md shadow-md text-sm flex items-center gap-2"
+                      className="px-4 py-2 dark:bg-zinc-600 dark:text-amber-100 bg-amber-100 border border-amber-400 text-gray-600 rounded-md shadow-md text-sm flex items-center gap-2"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
+                        width="20"
+                        height="20"
                         viewBox="0 0 48 48"
                       >
                         <path
@@ -333,11 +350,11 @@ const FileUpload = () => {
                   ).map((fileName, index) => (
                     <div
                       key={index}
-                      className="dark:bg-sky-700 dark:text-sky-100 bg-sky-100 border border-sky-300 text-gray-600 px-4 py-2 rounded-md shadow-md text-sm flex items-center gap-2"
+                      className="px-4 py-2 dark:bg-zinc-600 dark:text-sky-100 bg-sky-100 border border-sky-300 text-gray-600 rounded-lg shadow-md text-sm flex items-center gap-2"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="24"
+                        width="20"
                         height="20"
                         viewBox="0 0 48 48"
                       >
@@ -356,7 +373,7 @@ const FileUpload = () => {
             <div>
               {!uploading && (
                 <button
-                  className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-800  dark:border-slate-700 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                  className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Cancel
@@ -365,10 +382,10 @@ const FileUpload = () => {
             </div>
             <div>
               <button
-                className={`px-4 py-3 rounded-xl text-white w-full disabled:bg-gray-200 dark:disabled:bg-slate-500 dark:disabled:text-gray-00 disabled:text-gray-400 ${
+                className={`px-4 py-3 rounded-xl text-white w-full disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
                   uploading
-                    ? "bg-gray-500 dark:bg-slate-500 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600"
+                    ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-500"
                 }`}
                 onClick={uploadFiles}
                 disabled={
@@ -392,8 +409,8 @@ const FileUpload = () => {
           <div
             className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-3xl p-6 flex flex-col justify-center items-center ${
               isUploadSuccess
-                ? "dark:bg-slate-800 border dark:border-slate-700 dark:text-sky-100 bg-white text-gray-800"
-                : "dark:bg-slate-800 border dark:border-slate-700 dark:text-sky-100 bg-white text-gray-800"
+                ? "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white text-gray-800 "
+                : "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white text-gray-800 "
             } text-white`}
           >
             {isUploadSuccess ? (
@@ -427,7 +444,7 @@ const FileUpload = () => {
                 <div>
                   {!uploading && (
                     <button
-                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-700  dark:border-slate-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-zinc-700  dark:border-zinc-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
                       onClick={cancelUpload}
                     >
                       Go back
@@ -467,7 +484,7 @@ const FileUpload = () => {
                 <div>
                   {!uploading && (
                     <button
-                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-slate-700  dark:border-slate-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                      className="mt-4 w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2  text-center shadow-sm dark:bg-zinc-700  dark:border-zinc-600 dark:text-gray-400 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
                       onClick={cancelUpload}
                     >
                       Go back

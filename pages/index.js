@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   return (
-    <div className="relative h-screen ">
-      <div className="absolute inset-0 bg-cover bg-center bg-blue-50 dark:bg-slate-950"></div>
-      <div className="relative flex items-center justify-center h-full">
+    <div className="relative min-h-screen flex items-center justify-center">
+      <div className="absolute inset-0 bg-cover bg-center bg-blue-50 dark:bg-zinc-900"></div>
+      <div className="relative flex items-center justify-center w-full my-4">
         <FileUpload />
       </div>
     </div>
