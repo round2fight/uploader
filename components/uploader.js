@@ -383,7 +383,7 @@ const FileUpload = () => {
             </div>
             <div className="col-span-1">
               <button
-                className={`w-full py-2 px-4 rounded-xl text-white dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
+                className={`w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
                   uploading
                     ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
                     : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"
