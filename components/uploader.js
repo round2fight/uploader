@@ -201,7 +201,7 @@ const FileUpload = () => {
 
   return (
     // bg-opacity-75
-    <div className="bg-white dark:bg-zinc-700 p-6 rounded-xl shadow-lg">
+    <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
       <div className="flex items-center justify-center mb-4">
         <Image src="/Uday4.png" alt="Logo" width={300} height={50} />
       </div>
@@ -230,10 +230,10 @@ const FileUpload = () => {
           {/* Drag-and-Drop & File Selection */}
           <div
             {...getRootProps()}
-            className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-2  shadow-md w-full min-h-60 ${
+            className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1  shadow-md w-full min-h-60 ${
               isDragActive
-                ? "border-dashed dark:border-zinc-400 dark:bg-zinc-600 border-sky-500 bg-violet-50"
-                : "border-dashed dark:bg-zinc-800 border dark:border-zinc-500 border-sky-400 bg-white"
+                ? "bborder-dashed dark:border-zinc-300 dark:bg-zinc-600 border-sky-200 bg-sky-50"
+                : "bborder-dashed dark:bg-zinc-800 border dark:border-zinc-600 border-zinc-300 bg-white"
             }`}
           >
             <input {...getInputProps()} />
