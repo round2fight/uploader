@@ -308,9 +308,9 @@ const FileUpload = () => {
           />
         </div> */}
 
-            <div class="col-span-2">
+            <div class="col-span-2 ">
               {files.length > 0 && (
-                <div className="mt-1 space-y-2">
+                <div className="my-1 space-y-2">
                   {Array.from(
                     new Set(
                       files
@@ -320,7 +320,7 @@ const FileUpload = () => {
                   ).map((folderName, index) => (
                     <div
                       key={index}
-                      className="px-4 py-2 dark:bg-zinc-600 dark:text-amber-100 bg-amber-100 border border-amber-400 text-gray-600 rounded-md shadow-md text-sm flex items-center gap-2"
+                      className="px-4 py-2 dark:bg-zinc-600 dark:text-amber-100 bg-amber-100 border border-amber-400 text-gray-600 rounded-lg shadow-md text-sm flex items-center gap-2"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -370,22 +370,23 @@ const FileUpload = () => {
                 </div>
               )}
             </div>
-            <div>
+
+            <div className="col-span-1">
               {!uploading && (
                 <button
-                  className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 "
+                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Cancel
                 </button>
               )}
             </div>
-            <div>
+            <div className="col-span-1">
               <button
-                className={`px-4 py-3 rounded-xl text-white w-full disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
+                className={`w-full py-2 px-4 rounded-xl text-white dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
                   uploading
                     ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-zinc-700"
+                    : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"
                 }`}
                 onClick={uploadFiles}
                 disabled={
