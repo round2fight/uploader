@@ -385,7 +385,7 @@ const FileUpload = () => {
                 className={`px-4 py-3 rounded-xl text-white w-full disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
                   uploading
                     ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-500"
+                    : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-zinc-700"
                 }`}
                 onClick={uploadFiles}
                 disabled={
