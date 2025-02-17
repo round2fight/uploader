@@ -13,7 +13,8 @@ const FileUpload = () => {
   const [isUploadSuccess, setIsUploadSuccess] = useState(null);
   // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
   // const serverUrl = "https://meowsician.shop/api/upload";
-  const serverUrl = "http://meowsician.shop:8083/api/upload";
+  // const serverUrl = "http://meowsician.shop:8083/api/upload";
+  const serverUrl = "http://106.51.187.134:8083/api/upload";
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
@@ -239,7 +240,7 @@ const FileUpload = () => {
             className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1  shadow-md w-full min-h-60 ${
               isDragActive
                 ? "bborder-dashed dark:border-zinc-300 dark:xbg-zinc-600 bg-transparent border-sky-200 bg-sky-50"
-                : "bborder-dashed dark:xbg-zinc-800  bg-transparent border dark:border-zinc-600 border-zinc-300 bg-white"
+                : "bborder-dashed dark:xbg-zinc-800  bg-transparent border dark:border-zinc-600 border-zinc-300"
             }`}
           >
             <input {...getInputProps()} />
