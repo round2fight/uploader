@@ -11,8 +11,9 @@ const FileUpload = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploadSuccess, setIsUploadSuccess] = useState(null);
-  const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
+  // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
   // const serverUrl = "https://meowsician.shop/api/upload";
+  const serverUrl = "http://meowsician.shop:8083/api/upload";
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
