@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect, useState } from "react";
 import FileUpload from "@/components/uploader";
+import LazyLoadVideo from "@/components/lazyLoadVideo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +24,7 @@ export default function Home() {
       {/* Logo Section */}
 
       {/* Background Video */}
-      <video
+      {/* <video
         className="absolute top-0 left-0 w-full h-full object-cover"
         autoPlay
         loop
@@ -31,7 +32,8 @@ export default function Home() {
         playsInline
       >
         <source src="/paintwater.mp4" type="video/mp4" />
-      </video>
+      </video> */}
+      <LazyLoadVideo />
 
       {/* Gradient Overlay */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/60 to-transparent"></div>

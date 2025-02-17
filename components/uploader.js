@@ -197,7 +197,8 @@ const FileUpload = () => {
     setUploading(false); // Reset uploading state
     setUploadProgress(0); // Reset upload progress
     setIsUploadSuccess(null); // Reset success/failure status
-    window.location.reload(); // Refresh the page
+
+    // window.location.reload(); // Refresh the page
   };
 
   return (
