@@ -11,8 +11,8 @@ const FileUpload = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploadSuccess, setIsUploadSuccess] = useState(null);
-  // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
-  const serverUrl = "https://meowsician.shop/api/upload";
+  const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
+  // const serverUrl = "https://meowsician.shop/api/upload";
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
@@ -25,10 +25,9 @@ const FileUpload = () => {
       return;
     }
 
-    let extractedFolderName = "Uploaded_Files"; // Default folder name
-
     // Detect folder name if available
     const fileWithPath = acceptedFiles.find((file) => file.webkitRelativePath);
+    let extractedFolderName = "";
     if (fileWithPath) {
       extractedFolderName = fileWithPath.webkitRelativePath.split("/")[0];
     }
@@ -201,9 +200,14 @@ const FileUpload = () => {
 
   return (
     // bg-opacity-75
-    <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
+    // <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
+    <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-4 mb-4 rounded-xl shadow-xl min-w-96">
+      <h1 className="text-white text-xl font-extrabold flex justify-center mix-blend-difference">
+        Get started
+      </h1>
+
       <div className="flex items-center justify-center mb-4">
-        <Image src="/Uday4.png" alt="Logo" width={300} height={50} />
+        {/* <Image src="/Uday4.png" alt="Logo" width={500} height={50} /> */}
       </div>
       {isUploadSuccess !== null ? (
         <></>
@@ -217,14 +221,14 @@ const FileUpload = () => {
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             //   focus:ring-1 focus:ring-slate-500
-            className="p-2 rounded-lg shadow-md w-full mb-2 border dark:bg-zinc-800 dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
+            className="p-2 rounded-lg shadow-md w-full mb-2 border dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
           />
           <div className="mb-2">
             <textarea
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="p-2 rounded-lg shadow-md w-full border dark:bg-zinc-800 dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
+              className="p-2 rounded-lg shadow-md w-full border dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
             />
           </div>
 
@@ -233,8 +237,8 @@ const FileUpload = () => {
             {...getRootProps()}
             className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1  shadow-md w-full min-h-60 ${
               isDragActive
-                ? "bborder-dashed dark:border-zinc-300 dark:bg-zinc-600 border-sky-200 bg-sky-50"
-                : "bborder-dashed dark:bg-zinc-800 border dark:border-zinc-600 border-zinc-300 bg-white"
+                ? "bborder-dashed dark:border-zinc-300 dark:xbg-zinc-600 bg-transparent border-sky-200 bg-sky-50"
+                : "bborder-dashed dark:xbg-zinc-800  bg-transparent border dark:border-zinc-600 border-zinc-300 bg-white"
             }`}
           >
             <input {...getInputProps()} />
@@ -263,7 +267,7 @@ const FileUpload = () => {
                 d="m68.63,31.42h10.08c-.41-1.06-1.03-2.04-1.85-2.87-4.58-4.6-9.13-9.28-13.6-13.94-.9-.94-2-1.64-3.21-2.07l.02,10.32c.01,4.72,3.84,8.54,8.56,8.54Z"
               ></path>
             </svg>
-            <div className="dark:text-zinc-400 text-gray-400 text-sm text-center flex justify-center">
+            <div className=" text-white dark:xtext-zinc-400 xtext-gray-400 text-sm text-center flex justify-center">
               Drag & drop your files here or&nbsp;<u>click here</u>
             </div>
             {/* <div>
@@ -273,11 +277,11 @@ const FileUpload = () => {
         </div> */}
           </div>
 
-          <div class="grid grid-cols-2 gap-1 mt-2">
-            <div class="col-span-2 flex justify-center">
+          <div className="grid grid-cols-2 gap-1 mt-2">
+            <div className="col-span-2 flex justify-center">
               <label
                 htmlFor="folder-upload"
-                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-blue-100 hover:text-gray-600 "
+                className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-opacity-30 dark:hover:bg-opacity-50 dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-blue-100 hover:text-gray-600 "
               >
                 Attach Folder
               </label>
@@ -292,7 +296,7 @@ const FileUpload = () => {
               />
             </div>
 
-            {/* <div class="col-span-2  flex justify-center">
+            {/* <div className="col-span-2  flex justify-center">
           <label
             htmlFor="file-upload"
             className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 flex items-center justify-center gap-2 text-center shadow-sm border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600"
@@ -309,7 +313,7 @@ const FileUpload = () => {
           />
         </div> */}
 
-            <div class="col-span-2 ">
+            <div className="col-span-2 ">
               {files.length > 0 && (
                 <div className="my-1 space-y-2">
                   {Array.from(
@@ -375,7 +379,7 @@ const FileUpload = () => {
             <div className="col-span-1">
               {!uploading && (
                 <button
-                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
+                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-opacity-30 dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Cancel
@@ -411,8 +415,8 @@ const FileUpload = () => {
           <div
             className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-xl p-6 flex flex-col justify-center items-center ${
               isUploadSuccess
-                ? "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white text-gray-800 "
-                : "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white text-gray-800 "
+                ? "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white dark:bg-opacity-70 text-gray-800 "
+                : "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white dark:bg-opacity-70 text-gray-800 "
             } text-white`}
           >
             {isUploadSuccess ? (
@@ -436,7 +440,7 @@ const FileUpload = () => {
                     ></path>
                   </svg>
                 </div>
-                <div className="text-center text-zinc-500">
+                <div className="text-center text-white">
                   <div className="font-bold"> Upload Successful! </div>
                   <div>
                     {" "}
@@ -471,7 +475,7 @@ const FileUpload = () => {
                     ></path>
                   </svg>
                 </div>
-                <div className="text-center text-zinc-500">
+                <div className="text-center text-white">
                   <div>Oops! Something went wrong.</div>
                   Please try again later. We apologize for the inconvenience.
                 </div>
