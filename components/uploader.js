@@ -410,6 +410,14 @@ const FileUpload = () => {
               </button>
             </div>
           </div>
+          {uploading && (
+            <div className="w-full bg-gray-200 dark:bg-zinc-500 rounded-full mt-2">
+              <div
+                className="bg-green-600 dark:bg-green-400 h-2 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+          )}
         </>
       )}
       <div className="flex flex-col justify-center items-center">
