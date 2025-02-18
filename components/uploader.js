@@ -235,6 +235,24 @@ const FileUpload = () => {
             />
           </div>
 
+          <div className="col-span-2 flex justify-center mb-3">
+            <label
+              htmlFor="folder-upload"
+              className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600 "
+            >
+              Attach Folder
+            </label>
+            <input
+              id="folder-upload"
+              type="file"
+              webkitdirectory=""
+              directory=""
+              multiple
+              onChange={handleFolderUpload}
+              className="hidden"
+            />
+          </div>
+
           {/* Drag-and-Drop & File Selection */}
           <div
             {...getRootProps()}
@@ -281,7 +299,7 @@ const FileUpload = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-1 mt-2">
-            <div className="col-span-2 flex justify-center">
+            {/* <div className="col-span-2 flex justify-center">
               <label
                 htmlFor="folder-upload"
                 className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-opacity-30 dark:hover:bg-opacity-50 dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-blue-100 hover:text-gray-600 "
@@ -297,7 +315,7 @@ const FileUpload = () => {
                 onChange={handleFolderUpload}
                 className="hidden"
               />
-            </div>
+            </div> */}
 
             {/* <div className="col-span-2  flex justify-center">
           <label
@@ -382,7 +400,7 @@ const FileUpload = () => {
             <div className="col-span-1">
               {!uploading && (
                 <button
-                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-opacity-30 dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
+                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Cancel
