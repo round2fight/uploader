@@ -14,7 +14,8 @@ const FileUpload = () => {
   // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
   // const serverUrl = "https://meowsician.shop/api/upload";
   // const serverUrl = "http://meowsician.shop:8083/api/upload";
-  const serverUrl = "http://106.51.187.134:8085/api/upload";
+  // const serverUrl = "https://106.51.187.134:8085/api/upload";
+  const serverUrl = "https://meowsician.shop:8085/api/upload";
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {

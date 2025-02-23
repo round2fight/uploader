@@ -41,7 +41,7 @@ export default function Home() {
         <img
           src="/Uday4.png"
           alt="Company Logo"
-          className="sm:w-96 lg:w-96 opacity-90 drop-shadow-lg"
+          className="sm:w-[700px] lg:w-[750px] opacity-90 drop-shadow-lg"
         />
       </div>
       {/* Main Content Section */}
