@@ -11,11 +11,11 @@ const FileUpload = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploadSuccess, setIsUploadSuccess] = useState(null);
-  // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
+  const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
   // const serverUrl = "https://meowsician.shop/api/upload";
   // const serverUrl = "http://meowsician.shop:8083/api/upload";
   // const serverUrl = "https://106.51.187.134:8085/api/upload";
-  const serverUrl = "https://meowsician.shop:8085/api/upload";
+  // const serverUrl = "https://meowsician.shop:8085/api/upload";
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
@@ -100,6 +100,8 @@ const FileUpload = () => {
     return validTypes.includes(file.type);
   };
 
+  const CHUNK_SIZE = 90 * 1024 * 1024; // 100MB per chunk (adjustable)
+
   // Upload files to server
   const uploadFiles = async () => {
     if (!description || !companyName) {
@@ -122,69 +124,97 @@ const FileUpload = () => {
       2,
       "0"
     )}_${String(timestamp.getMinutes()).padStart(2, "0")}`;
-
     const pid = `job_${Date.now()}`;
     const newFolderName = `${formattedDate}/${formattedTime}_${companyName}_${pid}`;
 
-    const formData = new FormData();
-    formData.append("newFolderName", newFolderName); // Send folder name
-
-    files.forEach((file) => {
-      const relativePath = file.webkitRelativePath || file.name; // Preserve folder structure
-      formData.append("files", file, relativePath);
-    });
-
-    // Generate user_info.txt
+    // ✅ Upload `user_info.txt` first
     const userInfoContent = `Company: ${companyName}\nDescription: ${description}\nJob_ID: ${pid}`;
     const userInfoBlob = new Blob([userInfoContent], { type: "text/plain" });
     const userInfoFile = new File([userInfoBlob], `user_info_${pid}.txt`, {
       type: "text/plain",
     });
 
-    formData.append("files", userInfoFile, `user_info_${pid}.txt`);
-
-    // try {
-    //   const response = await axios.get("http://localhost:5000/api/ping");
-    //   alert("Server is up and running");
-    // } catch (error) {
-    //   console.error("Error uploading files:", error);
-    //   if (error.response) {
-    //     console.error("Response error:", error.response);
-    //   } else if (error.request) {
-    //     console.error("Request error:", error.request);
-    //   } else {
-    //     console.error("General error:", error.message);
-    //   }
-    //   alert("Error pinging server. Please try again later.");
-    // }
+    const userInfoFormData = new FormData();
+    userInfoFormData.append("chunk", userInfoFile);
+    userInfoFormData.append("filename", `user_info_${pid}.txt`);
+    userInfoFormData.append("relativePath", `user_info_${pid}.txt`);
+    userInfoFormData.append("chunkIndex", 0);
+    userInfoFormData.append("totalChunks", 1);
+    userInfoFormData.append("newFolderName", newFolderName);
 
     try {
-      const response = await axios.post(serverUrl, formData, {
-        // timeout: 60000,
+      await axios.post(serverUrl, userInfoFormData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percentCompleted);
-        },
       });
-
-      console.log("Upload successful:", response.data);
-      setIsUploadSuccess(true);
     } catch (error) {
-      if (error.message === "Network Error") {
-        console.error("Network Error - Server might be down");
-        // alert("The server is currently unavailable. Please try again later.");
-      } else {
-        console.error("Error uploading files:", error);
-        // alert("Error uploading files. Please try again later.");
-      }
+      console.error("Error uploading user_info.txt", error);
+      alert("Failed to upload user_info.txt");
       setIsUploadSuccess(false);
-    } finally {
       setUploading(false);
-      setUploadProgress(0);
+      return;
     }
+
+    console.log("user_info.txt uploaded successfully!");
+
+    // ✅ Track total chunks (fixing wrong count)
+    let totalChunks = 0;
+    let uploadedChunks = 0;
+
+    for (const file of files) {
+      totalChunks += Math.ceil(file.size / CHUNK_SIZE);
+    }
+
+    const MAX_CONCURRENT_UPLOADS = 5; // Limit for rate control
+    let allChunkPromises = [];
+
+    for (const file of files) {
+      const fileChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+      for (let i = 0; i < fileChunks; i++) {
+        const start = i * CHUNK_SIZE;
+        const end = start + CHUNK_SIZE;
+        const chunk = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append("chunk", chunk);
+        formData.append("filename", file.name);
+        formData.append("relativePath", file.webkitRelativePath || file.name);
+        formData.append("chunkIndex", i);
+        formData.append("totalChunks", fileChunks);
+        formData.append("newFolderName", newFolderName);
+
+        // ✅ Track chunk progress with onUploadProgress (fixed)
+        const chunkPromise = axios.post(serverUrl, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.loaded === progressEvent.total) {
+              uploadedChunks++;
+              setUploadProgress(
+                Math.min(100, Math.round((uploadedChunks / totalChunks) * 100))
+              );
+            }
+          },
+        });
+
+        allChunkPromises.push(chunkPromise);
+
+        // ✅ Control concurrency (Upload only 5 chunks at a time)
+        if (allChunkPromises.length >= MAX_CONCURRENT_UPLOADS) {
+          await Promise.all(allChunkPromises);
+          allChunkPromises = [];
+        }
+      }
+    }
+
+    // ✅ Ensure remaining chunks are uploaded
+    if (allChunkPromises.length > 0) {
+      await Promise.all(allChunkPromises);
+    }
+
+    // alert("Upload complete!");
+    setUploadProgress(100); // ✅ Ensure final state is 100%
+    setUploading(false);
+    setIsUploadSuccess(true);
   };
 
   useEffect(() => {
