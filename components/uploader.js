@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const FileUpload = () => {
   const [files, setFiles] = useState([]);
@@ -11,11 +12,14 @@ const FileUpload = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploadSuccess, setIsUploadSuccess] = useState(null);
+  const controllerRef = useRef(null); // Store AbortController instance
+
+  const serverUrl = "https://udaydigital.shop:8085/api/upload";
   // const serverUrl = "http://localhost:5000/api/upload"; // Replace with your actual server URL
   // const serverUrl = "https://meowsician.shop/api/upload";
   // const serverUrl = "http://meowsician.shop:8083/api/upload";
   // const serverUrl = "https://106.51.187.134:8085/api/upload";
-  const serverUrl = "https://meowsician.shop:8085/api/upload";
+  // const serverUrl = "https://meowsician.shop:8085/api/upload";
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
@@ -100,12 +104,21 @@ const FileUpload = () => {
     return validTypes.includes(file.type);
   };
 
+  const CHUNK_SIZE = 90 * 1024 * 1024; // 100MB per chunk (adjustable)
+
   // Upload files to server
   const uploadFiles = async () => {
     if (!description || !companyName) {
       alert("Please enter both description and company name.");
       return;
     }
+
+    if (controllerRef.current) {
+      controllerRef.current.abort(); // Cancel any ongoing request
+    }
+
+    controllerRef.current = new AbortController();
+    const signal = controllerRef.current.signal;
 
     setUploading(true);
     setUploadProgress(0);
@@ -122,74 +135,158 @@ const FileUpload = () => {
       2,
       "0"
     )}_${String(timestamp.getMinutes()).padStart(2, "0")}`;
-
     const pid = `job_${Date.now()}`;
     const newFolderName = `${formattedDate}/${formattedTime}_${companyName}_${pid}`;
 
-    const formData = new FormData();
-    formData.append("newFolderName", newFolderName); // Send folder name
-
-    files.forEach((file) => {
-      const relativePath = file.webkitRelativePath || file.name; // Preserve folder structure
-      formData.append("files", file, relativePath);
-    });
-
-    // Generate user_info.txt
+    // ✅ Upload `user_info.txt` first
     const userInfoContent = `Company: ${companyName}\nDescription: ${description}\nJob_ID: ${pid}`;
     const userInfoBlob = new Blob([userInfoContent], { type: "text/plain" });
     const userInfoFile = new File([userInfoBlob], `user_info_${pid}.txt`, {
       type: "text/plain",
     });
 
-    formData.append("files", userInfoFile, `user_info_${pid}.txt`);
-
-    // try {
-    //   const response = await axios.get("http://localhost:5000/api/ping");
-    //   alert("Server is up and running");
-    // } catch (error) {
-    //   console.error("Error uploading files:", error);
-    //   if (error.response) {
-    //     console.error("Response error:", error.response);
-    //   } else if (error.request) {
-    //     console.error("Request error:", error.request);
-    //   } else {
-    //     console.error("General error:", error.message);
-    //   }
-    //   alert("Error pinging server. Please try again later.");
-    // }
+    const userInfoFormData = new FormData();
+    userInfoFormData.append("chunk", userInfoFile);
+    userInfoFormData.append("filename", `user_info_${pid}.txt`);
+    userInfoFormData.append("relativePath", `user_info_${pid}.txt`);
+    userInfoFormData.append("chunkIndex", 0);
+    userInfoFormData.append("totalChunks", 1);
+    userInfoFormData.append("newFolderName", newFolderName);
 
     try {
-      const response = await axios.post(serverUrl, formData, {
-        // timeout: 60000,
+      await axios.post(serverUrl, userInfoFormData, {
         headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percentCompleted);
-        },
+        signal,
       });
-
-      console.log("Upload successful:", response.data);
-      setIsUploadSuccess(true);
     } catch (error) {
-      if (error.message === "Network Error") {
-        console.error("Network Error - Server might be down");
-        // alert("The server is currently unavailable. Please try again later.");
+      if (axios.isCancel(error)) {
+        console.log("Upload canceled.");
+      } else if (error.response) {
+        // Server responded with a status code outside 2xx
+        console.error(
+          "Server Error:",
+          error.response.status,
+          error.response.data
+        );
+      } else if (error.request) {
+        // No response received (network error, server down, etc.)
+        console.error("Network Error: No response from server.");
       } else {
-        console.error("Error uploading files:", error);
-        // alert("Error uploading files. Please try again later.");
+        // Other errors (Axios misconfiguration, request setup issues, etc.)
+        console.error("Error:", error.message);
       }
+
       setIsUploadSuccess(false);
-    } finally {
       setUploading(false);
-      setUploadProgress(0);
+      return;
     }
+
+    console.log("user_info.txt uploaded successfully!");
+
+    // ✅ Track total chunks (fixing wrong count)
+    let totalChunks = 0;
+    let uploadedChunks = 0;
+
+    for (const file of files) {
+      totalChunks += Math.ceil(file.size / CHUNK_SIZE);
+    }
+
+    const MAX_CONCURRENT_UPLOADS = 5; // Limit for rate control
+    let allChunkPromises = [];
+
+    for (const file of files) {
+      const fileChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+      for (let i = 0; i < fileChunks; i++) {
+        const start = i * CHUNK_SIZE;
+        const end = start + CHUNK_SIZE;
+        const chunk = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append("chunk", chunk);
+        formData.append("filename", file.name);
+        formData.append("relativePath", file.webkitRelativePath || file.name);
+        formData.append("chunkIndex", i);
+        formData.append("totalChunks", fileChunks);
+        formData.append("newFolderName", newFolderName);
+
+        // ✅ Track chunk progress with onUploadProgress (fixed)
+        const chunkPromise = axios.post(serverUrl, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          signal,
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.loaded === progressEvent.total) {
+              uploadedChunks++;
+              setUploadProgress(
+                Math.min(100, Math.round((uploadedChunks / totalChunks) * 100))
+              );
+            }
+          },
+        });
+
+        allChunkPromises.push(chunkPromise);
+
+        // ✅ Control concurrency (Upload only 5 chunks at a time)
+        if (allChunkPromises.length >= MAX_CONCURRENT_UPLOADS) {
+          try {
+            await Promise.all(allChunkPromises);
+          } catch (error) {
+            handleUploadError(error);
+            return;
+          }
+          allChunkPromises = [];
+        }
+      }
+    }
+
+    // ✅ Ensure remaining chunks are uploaded
+    if (allChunkPromises.length > 0) {
+      try {
+        await Promise.all(allChunkPromises);
+      } catch (error) {
+        handleUploadError(error);
+        return;
+      }
+    }
+
+    // alert("Upload complete!");
+    setUploadProgress(100); // ✅ Ensure final state is 100%
+    setUploading(false);
+    setIsUploadSuccess(true);
+  };
+
+  const handleUploadError = (error) => {
+    if (axios.isCancel(error)) {
+      console.log("Upload canceled.");
+    } else if (error.response) {
+      console.error("Upload Error:", error.response.data);
+      alert(
+        `Upload failed: ${error.response.data.message || "Try again later."}`
+      );
+    } else if (error.request) {
+      console.error("No response from server.");
+      alert("Network issue! Check your connection.");
+    } else {
+      console.error("Unexpected error:", error.message);
+      alert(`Error: ${error.message}`);
+    }
+
+    setUploading(false);
   };
 
   useEffect(() => {
     console.log("Files", files);
   }, [files]);
+
+  const [dropzoneKey, setDropzoneKey] = useState(0); // Key to force re-render
+
+  const cancelOngoingUpload = () => {
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+      console.log("Upload request manually canceled.");
+    }
+    cancelUpload();
+  };
 
   const cancelUpload = () => {
     setFiles([]); // Clear the files array
@@ -199,13 +296,22 @@ const FileUpload = () => {
     setUploadProgress(0); // Reset upload progress
     setIsUploadSuccess(null); // Reset success/failure status
 
+    // ✅ Reset the file input
+    const fileInput = document.getElementById("folder-upload");
+    if (fileInput) {
+      fileInput.value = ""; // Clear the input value to allow re-upload
+    }
+
+    // ✅ Force re-render of Dropzone by updating key
+    setDropzoneKey((prevKey) => prevKey + 1);
+
     // window.location.reload(); // Refresh the page
   };
 
   return (
     // bg-opacity-75
     // <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
-    <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-4 mb-4 rounded-xl shadow-xl min-w-96">
+    <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 mb-4 rounded-3xl shadow-xl min-w-96 min-h-96">
       <h1 className="text-white text-xl font-extrabold flex justify-center mix-blend-difference">
         Get started
       </h1>
@@ -225,14 +331,14 @@ const FileUpload = () => {
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             //   focus:ring-1 focus:ring-slate-500
-            className="p-2 rounded-lg shadow-md w-full mb-2 border dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
+            className="p-2 rounded-lg shadow-md w-full mb-2 text-white border dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
           />
           <div className="mb-2">
             <textarea
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="p-2 rounded-lg shadow-md w-full border dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
+              className="p-2 rounded-lg shadow-md w-full border text-white  dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
             />
           </div>
 
@@ -256,6 +362,7 @@ const FileUpload = () => {
 
           {/* Drag-and-Drop & File Selection */}
           <div
+            key={dropzoneKey}
             {...getRootProps()}
             className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1  shadow-md w-full min-h-60 ${
               isDragActive
@@ -398,45 +505,70 @@ const FileUpload = () => {
               )}
             </div>
 
-            <div className="col-span-1">
-              {!uploading && (
-                <button
-                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
-                  onClick={cancelUpload}
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-            <div className="col-span-1">
-              <button
-                className={`w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
-                  uploading
-                    ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"
-                }`}
-                onClick={uploadFiles}
-                disabled={
-                  uploading ||
-                  files.length === 0 ||
-                  !description ||
-                  !companyName
-                }
-              >
-                {uploading
-                  ? `Uploading (${uploadProgress}%)...`
-                  : "Upload Files"}
-              </button>
-            </div>
+            {uploading ? (
+              <>
+                <div className="col-span-1">
+                  <button
+                    className="w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                    onClick={cancelOngoingUpload}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div className="col-span-1">
+                  <button
+                    className={`w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"`}
+                    disabled={true}
+                  >
+                    Uploading ...
+                  </button>
+                </div>
+
+                <div className="col-span-2 w-full bg-black bg-opacity-50 rounded-full mb-2 mt-2 relative h-5">
+                  <motion.div
+                    className="bg-green-500 dark:bg-green-400 h-full rounded-full"
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${uploadProgress}%` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  ></motion.div>
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                    {uploadProgress}%
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="col-span-1">
+                  <button
+                    className="w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                    onClick={cancelUpload}
+                  >
+                    Reset
+                  </button>
+                </div>
+                <div className="col-span-1">
+                  <button
+                    className={`w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
+                      uploading
+                        ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"
+                    }`}
+                    onClick={uploadFiles}
+                    disabled={
+                      uploading ||
+                      files.length === 0 ||
+                      !description ||
+                      !companyName
+                    }
+                  >
+                    {uploading
+                      ? `Uploading (${uploadProgress}%)...`
+                      : "Upload Files"}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-          {uploading && (
-            <div className="w-full bg-gray-200 dark:bg-zinc-500 rounded-full mt-2">
-              <div
-                className="bg-green-600 dark:bg-green-400 h-2 rounded-full"
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
-            </div>
-          )}
         </>
       )}
       <div className="flex flex-col justify-center items-center">
@@ -445,13 +577,17 @@ const FileUpload = () => {
           <div
             className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-xl p-6 flex flex-col justify-center items-center ${
               isUploadSuccess
-                ? "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white dark:bg-opacity-70 text-gray-800 "
-                : "dark:bg-zinc-800 border dark:border-zinc-700 dark:text-sky-100 bg-white dark:bg-opacity-70 text-gray-800 "
+                ? " border dark:border-zinc-700 dark:text-sky-100  dark:bg-opacity-70 text-gray-800 "
+                : " border dark:border-zinc-700 dark:text-sky-100  dark:bg-opacity-70 text-gray-800 "
             } text-white`}
           >
             {isUploadSuccess ? (
               <>
-                <div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     x="0px"
@@ -469,20 +605,30 @@ const FileUpload = () => {
                       d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
                     ></path>
                   </svg>
-                </div>
-                <div className="text-center text-white">
-                  <div className="font-bold"> Upload Successful! </div>
-                  <div>
-                    {" "}
-                    We&rsquo;ve received your files and will be in touch soon
-                    with the next steps.{" "}
+                </motion.div>
+                <motion.div
+                  className="text-center text-white m-4"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                >
+                  <div className="font-bold font-mono text-2xl">
+                    Upload Successful!
                   </div>
-                  Thank you for choosing us!
-                </div>
+                  <div className="font-mono text-md">
+                    Your files have been successfully uploaded. <br />
+                    Our team will review them and get back to you. <br />
+                    Thank you for choosing us!
+                  </div>
+                </motion.div>
               </>
             ) : (
               <>
-                <div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     x="0px"
@@ -504,17 +650,27 @@ const FileUpload = () => {
                       d="M32.484,29.656l-2.828,2.828l-14.14-14.14l2.828-2.828L32.484,29.656z"
                     ></path>
                   </svg>
-                </div>
-                <div className="text-center text-white">
-                  <div>Oops! Something went wrong.</div>
-                  Please try again later. We apologize for the inconvenience.
-                </div>
+                </motion.div>
+                <motion.div
+                  className="text-center text-white m-4"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                >
+                  <div className="font-bold font-mono text-2xl">
+                    Oops! Something went wrong.
+                  </div>
+                  <div className="font-mono text-md">
+                    {" "}
+                    Please try again later. We apologize for the inconvenience.
+                  </div>
+                </motion.div>
               </>
             )}
             <div>
               {!uploading && (
                 <button
-                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200 text-gray-500 hover:bg-zinc-200 hover:text-gray-600 "
+                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm text-white  dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Go back
