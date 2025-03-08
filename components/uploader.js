@@ -312,7 +312,7 @@ const FileUpload = () => {
     // bg-opacity-75
     // <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 mb-4 rounded-3xl shadow-xl min-w-96 min-h-96">
-      <h1 className="text-white text-xl font-extrabold flex justify-center mix-blend-difference">
+      <h1 className="font-sans text-white text-xl font-extrabold flex justify-center mix-blend-difference">
         Get started
       </h1>
 
@@ -331,21 +331,20 @@ const FileUpload = () => {
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             //   focus:ring-1 focus:ring-slate-500
-            className="p-2 rounded-lg shadow-md w-full mb-2 text-white border dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
+            className="font-sans p-2 rounded-lg shadow-md w-full mb-2 text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
           />
           <div className="mb-2">
             <textarea
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="p-2 rounded-lg shadow-md w-full border text-white  dark:xbg-zinc-800 bg-transparent placeholder:text-white dark:border-zinc-600 dark:focus:border-zinc-200  border-gray-300 focus:border-slate-200 outline-none"
+              className="font-sans p-2 rounded-lg shadow-md w-full mb-2 text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
             />
           </div>
-
           <div className="col-span-2 flex justify-center mb-3">
             <label
               htmlFor="folder-upload"
-              className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600 "
+              className="font-sans w-full h-full py-2 px-4 rounded-xl cursor-pointer border text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 border-zinc-500 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600"
             >
               Attach Folder
             </label>
@@ -364,14 +363,26 @@ const FileUpload = () => {
           <div
             key={dropzoneKey}
             {...getRootProps()}
-            className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1  shadow-md w-full min-h-60 ${
+            className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1 border-zinc-500  shadow-xl w-full min-h-60 ${
               isDragActive
-                ? "bborder-dashed dark:border-zinc-300 dark:xbg-zinc-600 bg-transparent border-sky-200 bg-sky-50"
-                : "bborder-dashed dark:xbg-zinc-800  bg-transparent border dark:border-zinc-600 border-zinc-300"
+                ? "bborder-dashed bg-transparent border-zinc-100 bg-sky-50"
+                : "bborder-dashed  bg-transparent border  border-zinc-500"
             }`}
           >
             <input {...getInputProps()} />
             <svg
+              className=" text-white  mb-4"
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="100"
+              height="100"
+              viewBox="0 0 48 48"
+            >
+              <path fill="#90CAF9" d="M40 45L8 45 8 3 30 3 40 13z"></path>
+              <path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"></path>
+            </svg>
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
               y="0px"
@@ -395,8 +406,8 @@ const FileUpload = () => {
                 fill="#6b96d6"
                 d="m68.63,31.42h10.08c-.41-1.06-1.03-2.04-1.85-2.87-4.58-4.6-9.13-9.28-13.6-13.94-.9-.94-2-1.64-3.21-2.07l.02,10.32c.01,4.72,3.84,8.54,8.56,8.54Z"
               ></path>
-            </svg>
-            <div className=" text-white dark:xtext-zinc-400 xtext-gray-400 text-sm text-center flex justify-center">
+            </svg> */}
+            <div className="font-sans text-white text-sm text-center flex justify-center">
               Drag & drop your files here or&nbsp;<u>click here</u>
             </div>
             {/* <div>
@@ -454,7 +465,7 @@ const FileUpload = () => {
                   ).map((folderName, index) => (
                     <div
                       key={index}
-                      className="px-4 py-2 dark:bg-zinc-600 dark:text-amber-100 bg-amber-100 border border-amber-400 text-gray-600 rounded-lg shadow-md text-sm flex items-center gap-2"
+                      className="font-sans px-4 py-2 bg-zinc-600 bg-opacity-40 text-amber-100  border border-amber-400 rounded-lg shadow-md text-sm flex items-center gap-2"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -484,7 +495,7 @@ const FileUpload = () => {
                   ).map((fileName, index) => (
                     <div
                       key={index}
-                      className="px-4 py-2 dark:bg-zinc-600 dark:text-sky-100 bg-sky-100 border border-sky-300 text-gray-600 rounded-lg shadow-md text-sm flex items-center gap-2"
+                      className="font-sans px-4 py-2 dark:bg-zinc-600 text-sky-100 bg-zinc-600 bg-opacity-40 border border-sky-300  rounded-md shadow-lg text-sm flex items-center gap-2"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -509,7 +520,7 @@ const FileUpload = () => {
               <>
                 <div className="col-span-1">
                   <button
-                    className="w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                    className="font-sans w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
                     onClick={cancelOngoingUpload}
                   >
                     Cancel
@@ -517,7 +528,7 @@ const FileUpload = () => {
                 </div>
                 <div className="col-span-1">
                   <button
-                    className={`w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"`}
+                    className={`font-sans w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"`}
                     disabled={true}
                   >
                     Uploading ...
@@ -540,7 +551,7 @@ const FileUpload = () => {
               <>
                 <div className="col-span-1">
                   <button
-                    className="w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                    className="font-sans w-full h-full py-2 px-4 rounded-xl cursor-pointer border text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600"
                     onClick={cancelUpload}
                   >
                     Reset
@@ -548,7 +559,7 @@ const FileUpload = () => {
                 </div>
                 <div className="col-span-1">
                   <button
-                    className={`w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
+                    className={`font-sans w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-300 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 ${
                       uploading
                         ? "bg-gray-500 dark:bg-zinc-500 cursor-not-allowed"
                         : "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"
@@ -561,9 +572,7 @@ const FileUpload = () => {
                       !companyName
                     }
                   >
-                    {uploading
-                      ? `Uploading (${uploadProgress}%)...`
-                      : "Upload Files"}
+                    Upload Files
                   </button>
                 </div>
               </>
@@ -612,10 +621,10 @@ const FileUpload = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, ease: "easeOut" }}
                 >
-                  <div className="font-bold font-mono text-2xl">
+                  <div className="font-bold font-sans text-2xl">
                     Upload Successful!
                   </div>
-                  <div className="font-mono text-md">
+                  <div className="font-sans text-md">
                     Your files have been successfully uploaded. <br />
                     Our team will review them and get back to you. <br />
                     Thank you for choosing us!
@@ -657,10 +666,10 @@ const FileUpload = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, ease: "easeOut" }}
                 >
-                  <div className="font-bold font-mono text-2xl">
+                  <div className="font-bold font-sans text-2xl">
                     Oops! Something went wrong.
                   </div>
-                  <div className="font-mono text-md">
+                  <div className="font-sans text-md">
                     {" "}
                     Please try again later. We apologize for the inconvenience.
                   </div>
@@ -670,7 +679,7 @@ const FileUpload = () => {
             <div>
               {!uploading && (
                 <button
-                  className="w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm text-white  dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                  className="font-sans w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm text-white  dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
                   onClick={cancelUpload}
                 >
                   Go back
