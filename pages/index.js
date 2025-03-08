@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export default function Home() {
   return (
     // <div className="relative min-h-screen xbg-zinc-300 dark:bg-zinc-900">
-    <div className="relative min-h-screen bg-zinc-300 dark:bg-zinc-900 flex flex-col items-center justify-center">
+    <div className="relative min-h-screen bg-black flex flex-col items-center justify-center">
       {/* Logo Section */}
 
       {/* Background Video */}
