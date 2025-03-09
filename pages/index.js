@@ -61,7 +61,7 @@ export default function Home() {
           {/* <h2 className="text-sm font-semibold font-mono tracking-widest uppercase">
             Uday Digital
           </h2> */}
-          <h1 className="font-montserrat text-4xl text-start font-extrabold font-mono tracking-wide leading-snug">
+          <h1 className="font-montserrat text-4xl text-center font-extrabold font-mono tracking-wide leading-snug">
             Exceptional Prints Delivered with Precision
           </h1>
           {/* <h2 className=" text-start text-sm font-semibold font-mono tracking-widest uppercase">
@@ -87,15 +87,17 @@ export default function Home() {
             />
           </p>
 
-          <p className="text-start text-lg font-mono mt-4">
+          <p className="text-center text-lg font-mono ">
             Elevate your brand with our top-tier printing solutions. Explore our
             latest catalog for premium designs and flawless prints.
           </p>
-          <a href="/brochure.pdf" download>
-            <button className="flex mt-4 px-6 py-3 bg-opacity-70 font-mono bg-white text-black rounded-md shadow-lg hover:bg-gray-200">
-              Download Our Catalog
-            </button>
-          </a>
+          <div className="flex justify-center items-center">
+            <a href="/brochure.pdf" download>
+              <button className="flex jsu mt-4 px-6 py-3 bg-opacity-70 font-mono bg-white text-black rounded-md shadow-lg hover:bg-gray-200">
+                Download Our Catalog
+              </button>
+            </a>
+          </div>
         </motion.div>
 
         {/* Right Section (Card) */}

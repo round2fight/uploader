@@ -311,7 +311,7 @@ const FileUpload = () => {
   return (
     // bg-opacity-75
     // <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
-    <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 mb-4 rounded-3xl shadow-xl min-w-96 min-h-96">
+    <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 mb-1 rounded-3xl shadow-xl min-w-96 min-h-72">
       <h1 className="font-sans text-white text-xl font-extrabold flex justify-center mix-blend-difference">
         Get started
       </h1>
@@ -338,10 +338,10 @@ const FileUpload = () => {
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="font-sans p-2 rounded-lg shadow-md w-full mb-2 text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
+              className="font-sans p-2 rounded-lg shadow-md w-full  text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
             />
           </div>
-          <div className="col-span-2 flex justify-center mb-3">
+          <div className="col-span-2 flex justify-center mb-2">
             <label
               htmlFor="folder-upload"
               className="font-sans w-full h-full py-2 px-4 rounded-xl cursor-pointer border text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 border-zinc-500 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600"
