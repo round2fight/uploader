@@ -38,11 +38,11 @@ export default function Home() {
 
       {/* Gradient Overlay */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/60 to-transparent"></div>
-      <div className="flex justify-center items-center m-6">
+      <div className="flex justify-center items-center ">
         <motion.img
           src="/Uday4.png"
           alt="Company Logo"
-          className="sm:w-[700px] lg:w-[750px] opacity-90 drop-shadow-lg"
+          className="sm:w-[500px] lg:w-[550px] opacity-90 drop-shadow-lg"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
@@ -64,8 +64,27 @@ export default function Home() {
           <h1 className="font-montserrat text-4xl text-start font-extrabold font-mono tracking-wide leading-snug">
             Exceptional Prints Delivered with Precision
           </h1>
-          <p className="text-start text-lg font-mono mt-4">
-            With 7 colour <br></br>And Full colour prints
+          {/* <h2 className=" text-start text-sm font-semibold font-mono tracking-widest uppercase">
+            Featuring
+          </h2> */}
+          <p className="flex justify-center items-center text-start text-lg font-mono  ">
+            <motion.img
+              src="/7color.png"
+              alt="Company Logo"
+              className="w-[150px] opacity-90 drop-shadow-lg"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+
+            <motion.img
+              src="/fcl.png"
+              alt="Company Logo"
+              className="w-[150px] opacity-90 drop-shadow-lg"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
           </p>
 
           <p className="text-start text-lg font-mono mt-4">
