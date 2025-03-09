@@ -312,11 +312,11 @@ const FileUpload = () => {
     // bg-opacity-75
     // <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 mb-1 rounded-3xl shadow-xl min-w-96 min-h-72">
-      <h1 className="font-sans text-white text-xl font-extrabold flex justify-center mix-blend-difference">
+      <h1 className="font-sans text-white text-lg font-extrabold flex justify-center mix-blend-difference">
         Get started
       </h1>
 
-      <div className="flex items-center justify-center mb-4">
+      <div className="flex items-center justify-center mb-1">
         {/* <Image src="/Uday4.png" alt="Logo" width={500} height={50} /> */}
       </div>
       {isUploadSuccess !== null ? (
@@ -333,7 +333,7 @@ const FileUpload = () => {
             //   focus:ring-1 focus:ring-slate-500
             className="font-sans p-2 rounded-lg shadow-md w-full mb-2 text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
           />
-          <div className="mb-2">
+          <div className="mb-1">
             <textarea
               placeholder="Enter Description"
               value={description}
