@@ -61,13 +61,13 @@ export default function Home() {
           {/* <h2 className="text-sm font-semibold font-mono tracking-widest uppercase">
             Uday Digital
           </h2> */}
-          <h1 className="font-montserrat text-4xl text-center font-extrabold font-mono tracking-wide leading-snug">
-            Exceptional Prints Delivered with Precision
+          <h1 className="text-4xl text-center font-lemonmilklightitalic tracking-wide leading-snug mb-6">
+            The Perfect place for the Perfect Picture
           </h1>
           {/* <h2 className=" text-start text-sm font-semibold font-mono tracking-widest uppercase">
             Featuring
           </h2> */}
-          <p className="flex justify-center items-center text-start text-lg font-mono  ">
+          {/* <p className="flex justify-center items-center text-start text-lg font-mono  ">
             <motion.img
               src="/7color.png"
               alt="Company Logo"
@@ -85,15 +85,35 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
             />
-          </p>
+          </p> */}
 
-          <p className="text-center text-lg font-mono ">
-            Elevate your brand with our top-tier printing solutions. Explore our
-            latest catalog for premium designs and flawless prints.
+          <p className="text-center text-lg font-lemonmilklight mb-2">
+            Elevate your brand with our top-tier<br></br>
+            <motion.img
+              src="/7color.png"
+              alt="Company Logo"
+              className="w-[100px] opacity-90 drop-shadow-lg inline-block align-middle"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+            and newly launched
+            <motion.img
+              src="/fcl.png"
+              alt="Company Logo"
+              className="w-[80px] opacity-90 drop-shadow-lg inline-block align-middle"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+          </p>
+          <p className="text-center text-sm font-lemonmilklight">
+            Explore our latest catalog for<br></br> premium designs and flawless
+            prints.
           </p>
           <div className="flex justify-center items-center">
             <a href="/brochure.pdf" download>
-              <button className="flex jsu mt-4 px-6 py-3 bg-opacity-70 font-mono bg-white text-black rounded-md shadow-lg hover:bg-gray-200">
+              <button className="font-lemonmilklight text-xs flex jsu mt-4 px-6 py-3 bg-opacity-70  bg-white text-black rounded-md shadow-lg hover:bg-gray-200">
                 Download Our Catalog
               </button>
             </a>

@@ -6,6 +6,11 @@ export default {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    fontFamily: {
+      lemonmilk: ["lemonmilk", "sans-serif"],
+      lemonmilklight: ["lemonmilklight", "sans-serif"],
+      lemonmilklightitalic: ["lemonmilklightitalic", "sans-serif"],
+    },
     extend: {
       colors: {
         background: "var(--background)",

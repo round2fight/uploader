@@ -14,6 +14,21 @@
   }
 }
 
+@font-face {
+  font-family: "lemonmilk";
+  src: url("/font/lemonmilk.otf");
+}
+
+@font-face {
+  font-family: "lemonmilklight";
+  src: url("/font/LEMONMILK-Light.otf");
+}
+
+@font-face {
+  font-family: "lemonmilklightitalic";
+  src: url("/font/LEMONMILK-LightItalic.otf");
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
