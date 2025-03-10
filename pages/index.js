@@ -61,7 +61,7 @@ export default function Home() {
           {/* <h2 className="text-sm font-semibold font-mono tracking-widest uppercase">
             Uday Digital
           </h2> */}
-          <h1 className="text-4xl text-center font-lemonmilklightitalic tracking-wide leading-snug mb-6">
+          <h1 className="text-4xl text-center font-lemonmilklightitalic tracking-wide leading-snug mix mb-6">
             The Perfect place for the Perfect Picture
           </h1>
           {/* <h2 className=" text-start text-sm font-semibold font-mono tracking-widest uppercase">
@@ -86,22 +86,21 @@ export default function Home() {
               transition={{ duration: 1, ease: "easeOut" }}
             />
           </p> */}
-
           <p className="text-center text-lg font-lemonmilklight mb-2">
             Elevate your brand with our top-tier<br></br>
             <motion.img
               src="/7color.png"
               alt="Company Logo"
-              className="w-[100px] opacity-90 drop-shadow-lg inline-block align-middle"
+              className="w-[90px] opacity-90 drop-shadow-lg inline-block align-middle"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
             />
-            and newly launched
+            <span className="relative ml-[-10px]">and newly launched</span>
             <motion.img
               src="/fcl.png"
               alt="Company Logo"
-              className="w-[80px] opacity-90 drop-shadow-lg inline-block align-middle"
+              className="w-[70px] opacity-90 drop-shadow-lg inline-block align-middle"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
