@@ -124,6 +124,9 @@ const FileUpload = () => {
     setUploadProgress(0);
 
     const timestamp = new Date();
+    const hours = timestamp.getHours();
+    const minutes = timestamp.getMinutes();
+    const seconds = timestamp.getSeconds();
     const formattedDate = `${String(timestamp.getDate()).padStart(
       2,
       "0"
@@ -131,12 +134,26 @@ const FileUpload = () => {
       2,
       "0"
     )}-${timestamp.getFullYear()}`;
-    const formattedTime = `${String(timestamp.getHours()).padStart(
-      2,
-      "0"
-    )}_${String(timestamp.getMinutes()).padStart(2, "0")}`;
-    const pid = `job_${Date.now()}`;
-    const newFolderName = `${formattedDate}/${formattedTime}_${companyName}_${pid}`;
+
+    // const formattedTime = `${String(timestamp.getHours()).padStart(
+    //   2,
+    //   "0"
+    // )}_${String(timestamp.getMinutes()).padStart(2, "0")}`;
+    // const pid = `job_${Date.now()}`;
+    // const newFolderName = `${formattedDate}/${formattedTime}_${companyName}_${pid}`;
+
+    // Convert hours to 12-hour format and determine AM/PM
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = String(minutes).padStart(2, "0");
+
+    // Create formatted time in AM/PM format
+    const formattedTime = `${period}_${formattedHours}:${formattedMinutes}`;
+
+    // Generate pid with second-level encryption
+    const pid = `job_${Date.now()}_${seconds}`;
+
+    const newFolderName = `${formattedDate}/${formattedTime}_${companyName}______${pid}`;
 
     // ✅ Upload `user_info.txt` first
     const userInfoContent = `Company: ${companyName}\nDescription: ${description}\nJob_ID: ${pid}`;
