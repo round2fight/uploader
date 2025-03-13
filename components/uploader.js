@@ -144,7 +144,7 @@ const FileUpload = () => {
 
     // Convert hours to 12-hour format and determine AM/PM
     const period = hours >= 12 ? "PM" : "AM";
-    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedHours = hours % 12 === 0 ? "00" : String(hours % 12);
     const formattedMinutes = String(minutes).padStart(2, "0");
 
     // Create formatted time in AM/PM format
