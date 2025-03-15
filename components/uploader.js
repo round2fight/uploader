@@ -23,6 +23,15 @@ const FileUpload = () => {
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
+    // const validFiles = acceptedFiles.filter(isValidFile);
+
+    // if (validFiles.length === 0) {
+    //   alert(
+    //     "Only PNG, JPG, JPEG, TXT, DOC, DOCX, PSD, and AI files are allowed."
+    //   );
+    //   return;
+    // }
+
     processFiles(acceptedFiles);
   };
 
@@ -53,6 +62,13 @@ const FileUpload = () => {
       "application/msword": [],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [],
+      "application/pdf": [],
+      "application/postscript": [], // For .ai files
+      "application/x-photoshop": [], // For .psd files
+      "application/illustrator": [], // For .eps files
+      "application/x-illustrator": [],
+      "image/vnd.adobe.photoshop": [], // For .psd files
+      "application/octet-stream": [], // Some browsers detect .ai/.psd as this
     },
     multiple: true,
   });
@@ -100,8 +116,31 @@ const FileUpload = () => {
       "text/plain",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/postscript", // .ai files
+      "application/x-photoshop", // For .psd files
+      "application/x-illustrator", // For .eps files
+      "application/illustrator",
+      "application/pdf",
+      "image/vnd.adobe.photoshop", // .psd files
+      "application/octet-stream", // Some browsers misidentify AI/PSD as this
     ];
-    return validTypes.includes(file.type);
+    // return validTypes.includes(file.type);
+
+    const validExtensions = [
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".txt",
+      ".doc",
+      ".docx",
+      ".ai",
+      ".psd",
+      ".pdf",
+    ];
+    return (
+      validTypes.includes(file.type) ||
+      validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
+    );
   };
 
   const CHUNK_SIZE = 90 * 1024 * 1024; // 100MB per chunk (adjustable)
