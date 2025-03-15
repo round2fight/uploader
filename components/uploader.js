@@ -69,6 +69,13 @@ const FileUpload = () => {
       "application/x-illustrator": [],
       "image/vnd.adobe.photoshop": [], // For .psd files
       "application/octet-stream": [], // Some browsers detect .ai/.psd as this
+      "application/x-cdr": [], // CorelDRAW
+      "application/cdr": [], // Alternative CorelDRAW
+      "application/coreldraw": [], // Alternative CorelDRAW
+      "image/x-coreldraw": [], // Alternative CorelDRAW
+      "application/x-corel": [], // Alternative CorelDRAW
+      "application/x-coreldraw": [], // Alternative CorelDRAW
+      "application/x-draw": [], // Alternative CorelDRAW
     },
     multiple: true,
   });
@@ -123,6 +130,13 @@ const FileUpload = () => {
       "application/pdf",
       "image/vnd.adobe.photoshop", // .psd files
       "application/octet-stream", // Some browsers misidentify AI/PSD as this
+      "application/x-cdr", // CorelDRAW
+      "application/cdr", // Alternative CorelDRAW
+      "application/coreldraw", // Alternative CorelDRAW
+      "image/x-coreldraw", // Alternative CorelDRAW
+      "application/x-corel", // Alternative CorelDRAW
+      "application/x-coreldraw", // Alternative CorelDRAW
+      "application/x-draw", // Alternative CorelDRAW
     ];
     // return validTypes.includes(file.type);
 
@@ -136,6 +150,7 @@ const FileUpload = () => {
       ".ai",
       ".psd",
       ".pdf",
+      ".cdr",
     ];
     return (
       validTypes.includes(file.type) ||
