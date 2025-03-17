@@ -379,77 +379,240 @@ const FileUpload = () => {
     // bg-opacity-75
     // <div className="bg-white dark:bg-zinc-700 p-8 rounded-xl shadow-lg w-full lg:min-w-md lg:max-w-lg md:min-w-md md:max-w-lg sm:min-w-sm sm:max-w-sm m-6">
     <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-6 mb-1 rounded-3xl shadow-xl min-w-96 min-h-72">
-      <h1 className="font-sans text-white text-lg font-extrabold flex justify-center mix-blend-difference">
-        Get started
-      </h1>
-
-      <div className="flex items-center justify-center mb-1">
-        {/* <Image src="/Uday4.png" alt="Logo" width={500} height={50} /> */}
-      </div>
       {isUploadSuccess !== null ? (
-        <></>
+        <>
+          <div className="flex flex-col justify-center items-center">
+            {/* Upload Status */}
+
+            <div
+              className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-xl p-6 flex flex-col justify-center items-center ${
+                isUploadSuccess
+                  ? " border dark:border-zinc-700 dark:text-sky-100  dark:bg-opacity-70 text-gray-800 "
+                  : " border dark:border-zinc-700 dark:text-sky-100  dark:bg-opacity-70 text-gray-800 "
+              } text-white`}
+            >
+              {isUploadSuccess ? (
+                <>
+                  {/* <h1 className="font-sans text-white text-lg font-extrabold flex justify-center mix-blend-difference mb-1">
+                    Upload Successful!
+                  </h1> */}
+                  {/* <div className="font-bold font-sans text-2xl">
+                    Upload Successful!
+                  </div> */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      x="0px"
+                      y="0px"
+                      width="100"
+                      height="100"
+                      viewBox="0 0 48 48"
+                    >
+                      <path
+                        fill="#4caf50"
+                        d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                      ></path>
+                      <path
+                        fill="#ccff90"
+                        d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
+                      ></path>
+                    </svg>
+                  </motion.div>
+                  <motion.div
+                    className="text-center text-white m-4"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  >
+                    <div className="font-sans text-md">
+                      Your files have been successfully uploaded. <br />
+                      Our team will review them and get back to you. <br />
+                      Thank you for choosing us!
+                    </div>
+                  </motion.div>
+                </>
+              ) : (
+                <>
+                  {/* <h1 className="font-sans text-white text-lg font-extrabold flex justify-center mix-blend-difference mb-1">
+                    Upload failed!
+                  </h1> */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      x="0px"
+                      y="0px"
+                      width="100"
+                      height="100"
+                      viewBox="0 0 48 48"
+                    >
+                      <path
+                        fill="#f44336"
+                        d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                      ></path>
+                      <path
+                        fill="#fff"
+                        d="M29.656,15.516l2.828,2.828l-14.14,14.14l-2.828-2.828L29.656,15.516z"
+                      ></path>
+                      <path
+                        fill="#fff"
+                        d="M32.484,29.656l-2.828,2.828l-14.14-14.14l2.828-2.828L32.484,29.656z"
+                      ></path>
+                    </svg>
+                  </motion.div>
+                  <motion.div
+                    className="text-center text-white m-4"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  >
+                    <div className="font-bold font-sans text-2xl">
+                      Oops! Something went wrong.
+                    </div>
+                    <div className="font-sans text-md">
+                      {" "}
+                      Please try again later. We apologize for the
+                      inconvenience.
+                    </div>
+                  </motion.div>
+                </>
+              )}
+              <div>
+                {!uploading && (
+                  <button
+                    className="font-sans w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm text-white  dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                    onClick={cancelUpload}
+                  >
+                    Go back
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
       ) : (
         <>
           {/* Username & Company Name Input */}
 
-          <input
-            type="text"
-            placeholder="Enter Company Name"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            //   focus:ring-1 focus:ring-slate-500
-            className="font-sans p-2 rounded-lg shadow-md w-full mb-2 text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
-          />
-          <div className="mb-1">
-            <textarea
-              placeholder="Enter Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="font-sans p-2 rounded-lg shadow-md w-full  text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
-            />
-          </div>
-          <div className="col-span-2 flex justify-center mb-2">
-            <label
-              htmlFor="folder-upload"
-              className="font-sans w-full h-full py-2 px-4 rounded-xl cursor-pointer border text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 border-zinc-500 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600"
-            >
-              Attach Folder
-            </label>
-            <input
-              id="folder-upload"
-              type="file"
-              webkitdirectory=""
-              directory=""
-              multiple
-              onChange={handleFolderUpload}
-              className="hidden"
-            />
-          </div>
+          {uploading ? (
+            <div className="col-span-2 grid grid-cols-2 gap-2 mt-1">
+              <h1 className="col-span-2 font-sans text-center text-white text-lg font-extrabold mix-blend-difference ">
+                Please Standby
+              </h1>
+              <h6 className="col-span-2 font-sans text-center text-white text-md mix-blend-difference ">
+                Your files are being uploaded to us
+              </h6>
 
-          {/* Drag-and-Drop & File Selection */}
-          <div
-            key={dropzoneKey}
-            {...getRootProps()}
-            className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1 border-zinc-500  shadow-xl w-full min-h-60 ${
-              isDragActive
-                ? "bborder-dashed bg-transparent border-zinc-100 bg-sky-50"
-                : "bborder-dashed  bg-transparent border  border-zinc-500"
-            }`}
-          >
-            <input {...getInputProps()} />
-            <svg
-              className=" text-white  mb-4"
-              xmlns="http://www.w3.org/2000/svg"
-              x="0px"
-              y="0px"
-              width="100"
-              height="100"
-              viewBox="0 0 48 48"
-            >
-              <path fill="#90CAF9" d="M40 45L8 45 8 3 30 3 40 13z"></path>
-              <path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"></path>
-            </svg>
-            {/* <svg
+              <div className="col-span-2 flex justify-center items-center">
+                <motion.img
+                  src="/moving.gif"
+                  alt="Company Logo"
+                  className="w-[150px] opacity-90 drop-shadow-lg transform scaleX(-1)" // Add transform and scaleX(-1)
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                />
+              </div>
+
+              <div className="animate-glow col-span-2 h-8 w-full bg-black bg-opacity-40 rounded-full mb-1 mt-2 relative ">
+                <motion.div
+                  className="bg-green-500 dark:bg-green-400 h-full rounded-full"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${uploadProgress}%` }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                ></motion.div>
+                <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                  {uploadProgress}%
+                </span>
+              </div>
+              <div className="">
+                <button
+                  className="font-sans w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
+                  onClick={cancelOngoingUpload}
+                >
+                  Cancel
+                </button>
+              </div>
+              <div className="">
+                <button
+                  className={`font-sans w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"`}
+                  disabled={true}
+                >
+                  Uploading ...
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h1 className="col-span-2 font-sans text-center text-white text-lg font-extrabold mix-blend-difference mb-1">
+                Get started
+              </h1>
+
+              <input
+                type="text"
+                placeholder="Enter Company Name"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                //   focus:ring-1 focus:ring-slate-500
+                className="font-sans p-2 rounded-lg shadow-md w-full mb-2 text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
+              />
+              <div className="mb-1">
+                <textarea
+                  placeholder="Enter Description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="font-sans p-2 rounded-lg shadow-md w-full  text-white border bg-transparent placeholder:text-zinc-300 border-zinc-500 focus:border-white outline-none"
+                />
+              </div>
+              <div className="col-span-2 flex justify-center mb-2">
+                <label
+                  htmlFor="folder-upload"
+                  className="font-sans w-full h-full py-2 px-4 rounded-xl cursor-pointer border text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 border-zinc-500 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600"
+                >
+                  Attach Folder
+                </label>
+                <input
+                  id="folder-upload"
+                  type="file"
+                  webkitdirectory=""
+                  directory=""
+                  multiple
+                  onChange={handleFolderUpload}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Drag-and-Drop & File Selection */}
+              <div
+                key={dropzoneKey}
+                {...getRootProps()}
+                className={`flex flex-col items-center justify-center rounded-xl cursor-pointer transition border-1 border-zinc-500  shadow-xl w-full min-h-60 ${
+                  isDragActive
+                    ? "bborder-dashed bg-transparent border-zinc-100 bg-sky-50"
+                    : "bborder-dashed  bg-transparent border  border-zinc-500"
+                }`}
+              >
+                <input {...getInputProps()} />
+                <svg
+                  className=" text-white  mb-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  x="0px"
+                  y="0px"
+                  width="100"
+                  height="100"
+                  viewBox="0 0 48 48"
+                >
+                  <path fill="#90CAF9" d="M40 45L8 45 8 3 30 3 40 13z"></path>
+                  <path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"></path>
+                </svg>
+                {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
               y="0px"
@@ -474,18 +637,18 @@ const FileUpload = () => {
                 d="m68.63,31.42h10.08c-.41-1.06-1.03-2.04-1.85-2.87-4.58-4.6-9.13-9.28-13.6-13.94-.9-.94-2-1.64-3.21-2.07l.02,10.32c.01,4.72,3.84,8.54,8.56,8.54Z"
               ></path>
             </svg> */}
-            <div className="font-sans text-white text-sm text-center flex justify-center">
-              Drag & drop your files here or&nbsp;<u>click here</u>
-            </div>
-            {/* <div>
+                <div className="font-sans text-white text-sm text-center flex justify-center">
+                  Drag & drop your files here or&nbsp;<u>click here</u>
+                </div>
+                {/* <div>
           <button className="w-full m-1 py-2 px-4 rounded-xl cursor-pointer border-2 flex items-center justify-center gap-2 text-center shadow-sm border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600">
             <span>Click here</span>
           </button>
         </div> */}
-          </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-1 mt-2">
-            {/* <div className="col-span-2 flex justify-center">
+              <div className="grid grid-cols-2 gap-1 mt-2">
+                {/* <div className="col-span-2 flex justify-center">
               <label
                 htmlFor="folder-upload"
                 className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-opacity-30 dark:hover:bg-opacity-50 dark:bg-zinc-800 dark:text-zinc-300  dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 border-gray-200 text-gray-500 hover:bg-blue-100 hover:text-gray-600 "
@@ -503,7 +666,7 @@ const FileUpload = () => {
               />
             </div> */}
 
-            {/* <div className="col-span-2  flex justify-center">
+                {/* <div className="col-span-2  flex justify-center">
           <label
             htmlFor="file-upload"
             className="w-full h-full py-2 px-4 rounded-xl cursor-pointer border-2 flex items-center justify-center gap-2 text-center shadow-sm border-gray-200 text-gray-500 hover:bg-sky-200 hover:text-gray-600"
@@ -520,103 +683,77 @@ const FileUpload = () => {
           />
         </div> */}
 
-            <div className="col-span-2 ">
-              {files.length > 0 && (
-                <div className="my-1 space-y-2">
-                  {Array.from(
-                    new Set(
-                      files
-                        .filter((file) => file.webkitRelativePath)
-                        .map((file) => file.webkitRelativePath.split("/")[0])
-                    )
-                  ).map((folderName, index) => (
-                    <div
-                      key={index}
-                      className="font-sans px-4 py-2 bg-zinc-600 bg-opacity-40 text-amber-100  border border-amber-400 rounded-lg shadow-md text-sm flex items-center gap-2"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 48 48"
-                      >
-                        <path
-                          fill="#FFA000"
-                          d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z"
-                        ></path>
-                        <path
-                          fill="#FFCA28"
-                          d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z"
-                        ></path>
-                      </svg>
-                      <span>{folderName}</span>
+                <div className="col-span-2 ">
+                  {files.length > 0 && (
+                    <div className="my-1 space-y-2">
+                      {Array.from(
+                        new Set(
+                          files
+                            .filter((file) => file.webkitRelativePath)
+                            .map(
+                              (file) => file.webkitRelativePath.split("/")[0]
+                            )
+                        )
+                      ).map((folderName, index) => (
+                        <div
+                          key={index}
+                          className="font-sans px-4 py-2 bg-zinc-600 bg-opacity-40 text-amber-100  border border-amber-400 rounded-lg shadow-md text-sm flex items-center gap-2"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 48 48"
+                          >
+                            <path
+                              fill="#FFA000"
+                              d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z"
+                            ></path>
+                            <path
+                              fill="#FFCA28"
+                              d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z"
+                            ></path>
+                          </svg>
+                          <span>{folderName}</span>
+                        </div>
+                      ))}
+
+                      {Array.from(
+                        new Set(
+                          files
+                            .filter((file) => !file.webkitRelativePath)
+                            .map((file) => file.name)
+                        )
+                      ).map((fileName, index) => (
+                        <div
+                          key={index}
+                          className="font-sans px-4 py-2 dark:bg-zinc-600 text-sky-100 bg-zinc-600 bg-opacity-40 border border-sky-300  rounded-md shadow-lg text-sm flex items-center gap-2"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 48 48"
+                          >
+                            <path
+                              fill="#90CAF9"
+                              d="M40 45L8 45 8 3 30 3 40 13z"
+                            ></path>
+                            <path
+                              fill="#E1F5FE"
+                              d="M38.5 14L29 14 29 4.5z"
+                            ></path>
+                          </svg>
+                          <span>{fileName}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                </div>
+              </div>
 
-                  {Array.from(
-                    new Set(
-                      files
-                        .filter((file) => !file.webkitRelativePath)
-                        .map((file) => file.name)
-                    )
-                  ).map((fileName, index) => (
-                    <div
-                      key={index}
-                      className="font-sans px-4 py-2 dark:bg-zinc-600 text-sky-100 bg-zinc-600 bg-opacity-40 border border-sky-300  rounded-md shadow-lg text-sm flex items-center gap-2"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 48 48"
-                      >
-                        <path
-                          fill="#90CAF9"
-                          d="M40 45L8 45 8 3 30 3 40 13z"
-                        ></path>
-                        <path fill="#E1F5FE" d="M38.5 14L29 14 29 4.5z"></path>
-                      </svg>
-                      <span>{fileName}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {uploading ? (
-              <>
-                <div className="col-span-1">
-                  <button
-                    className="font-sans w-full text-white  py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm dark:bg-transparent  dark:hover:bg-opacity-50 dark:bg-zinc-800  dark:border-zinc-600 dark:hover:border-slate-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-100 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
-                    onClick={cancelOngoingUpload}
-                  >
-                    Cancel
-                  </button>
-                </div>
-                <div className="col-span-1">
-                  <button
-                    className={`font-sans w-full py-2 px-4 rounded-xl text-white disabled:border-zinc-300 dark:disabled:border-zinc-500 disabled:bg-gray-200 dark:disabled:bg-zinc-500 dark:disabled:text-zinc-600 disabled:text-gray-400 "bg-green-600 hover:bg-green-500 border border-green-700 dark:border-green-400"`}
-                    disabled={true}
-                  >
-                    Uploading ...
-                  </button>
-                </div>
-
-                <div className="col-span-2 w-full bg-black bg-opacity-50 rounded-full mb-2 mt-2 relative h-5">
-                  <motion.div
-                    className="bg-green-500 dark:bg-green-400 h-full rounded-full"
-                    initial={{ width: "0%" }}
-                    animate={{ width: `${uploadProgress}%` }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                  ></motion.div>
-                  <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
-                    {uploadProgress}%
-                  </span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="col-span-1">
+              <div className="col-span-2 grid grid-cols-2 gap-4 mt-1">
+                <div className=" ">
                   <button
                     className="font-sans w-full h-full py-2 px-4 rounded-xl cursor-pointer border text-center shadow-sm dark:bg-transparent dark:hover:bg-opacity-40 text-zinc-100 dark:border-zinc-600 dark:hover:border-zinc-400 dark:hover:bg-zinc-600 dark:hover:text-zinc-200 hover:bg-blue-100 hover:text-gray-600"
                     onClick={cancelUpload}
@@ -642,120 +779,11 @@ const FileUpload = () => {
                     Upload Files
                   </button>
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
         </>
       )}
-      <div className="flex flex-col justify-center items-center">
-        {/* Upload Status */}
-        {isUploadSuccess !== null && (
-          <div
-            className={`border-2 border-b-gray-200 mt-2 w-full min-h-100 rounded-xl p-6 flex flex-col justify-center items-center ${
-              isUploadSuccess
-                ? " border dark:border-zinc-700 dark:text-sky-100  dark:bg-opacity-70 text-gray-800 "
-                : " border dark:border-zinc-700 dark:text-sky-100  dark:bg-opacity-70 text-gray-800 "
-            } text-white`}
-          >
-            {isUploadSuccess ? (
-              <>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    x="0px"
-                    y="0px"
-                    width="100"
-                    height="100"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      fill="#4caf50"
-                      d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
-                    ></path>
-                    <path
-                      fill="#ccff90"
-                      d="M34.602,14.602L21,28.199l-5.602-5.598l-2.797,2.797L21,33.801l16.398-16.402L34.602,14.602z"
-                    ></path>
-                  </svg>
-                </motion.div>
-                <motion.div
-                  className="text-center text-white m-4"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                >
-                  <div className="font-bold font-sans text-2xl">
-                    Upload Successful!
-                  </div>
-                  <div className="font-sans text-md">
-                    Your files have been successfully uploaded. <br />
-                    Our team will review them and get back to you. <br />
-                    Thank you for choosing us!
-                  </div>
-                </motion.div>
-              </>
-            ) : (
-              <>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    x="0px"
-                    y="0px"
-                    width="100"
-                    height="100"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      fill="#f44336"
-                      d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
-                    ></path>
-                    <path
-                      fill="#fff"
-                      d="M29.656,15.516l2.828,2.828l-14.14,14.14l-2.828-2.828L29.656,15.516z"
-                    ></path>
-                    <path
-                      fill="#fff"
-                      d="M32.484,29.656l-2.828,2.828l-14.14-14.14l2.828-2.828L32.484,29.656z"
-                    ></path>
-                  </svg>
-                </motion.div>
-                <motion.div
-                  className="text-center text-white m-4"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                >
-                  <div className="font-bold font-sans text-2xl">
-                    Oops! Something went wrong.
-                  </div>
-                  <div className="font-sans text-md">
-                    {" "}
-                    Please try again later. We apologize for the inconvenience.
-                  </div>
-                </motion.div>
-              </>
-            )}
-            <div>
-              {!uploading && (
-                <button
-                  className="font-sans w-full py-2 px-4 rounded-xl cursor-pointer border-2 text-center shadow-sm text-white  dark:hover:bg-zinc-600 dark:hover:text-zinc-200 dark:text-zinc-300 border-gray-200  hover:bg-zinc-200 hover:text-gray-600 "
-                  onClick={cancelUpload}
-                >
-                  Go back
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
