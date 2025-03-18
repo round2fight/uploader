@@ -63,6 +63,11 @@ const FileUpload = () => {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [],
       "application/pdf": [],
+      "application/x-pdf": [],
+      "application/acrobat": [],
+      "applications/vnd.pdf": [],
+      "text/pdf": [],
+      "text/x-pdf": [],
       "application/postscript": [], // For .ai files
       "application/x-photoshop": [], // For .psd files
       "application/illustrator": [], // For .eps files
@@ -128,6 +133,11 @@ const FileUpload = () => {
       "application/x-illustrator", // For .eps files
       "application/illustrator",
       "application/pdf",
+      "application/x-pdf",
+      "application/acrobat",
+      "applications/vnd.pdf",
+      "text/pdf",
+      "text/x-pdf",
       "image/vnd.adobe.photoshop", // .psd files
       "application/octet-stream", // Some browsers misidentify AI/PSD as this
       "application/x-cdr", // CorelDRAW
@@ -138,7 +148,6 @@ const FileUpload = () => {
       "application/x-coreldraw", // Alternative CorelDRAW
       "application/x-draw", // Alternative CorelDRAW
     ];
-    // return validTypes.includes(file.type);
 
     const validExtensions = [
       ".png",
@@ -152,10 +161,15 @@ const FileUpload = () => {
       ".pdf",
       ".cdr",
     ];
-    return (
-      validTypes.includes(file.type) ||
-      validExtensions.some((ext) => file.name.toLowerCase().endsWith(ext))
+
+    if (!file) return false; // Prevent errors if no file is selected
+
+    const fileTypeValid = validTypes.includes(file.type);
+    const fileExtensionValid = validExtensions.some((ext) =>
+      file.name.toLowerCase().endsWith(ext)
     );
+
+    return fileTypeValid || fileExtensionValid;
   };
 
   const CHUNK_SIZE = 90 * 1024 * 1024; // 100MB per chunk (adjustable)
@@ -198,7 +212,7 @@ const FileUpload = () => {
     const uniqueId = String(milliseconds).padStart(3, "0").substring(0, 2);
 
     // Create formatted time in AM/PM format
-    const formattedTime = `${period}_${formattedHours}:${formattedMinutes}:${seconds}:${uniqueId}`;
+    const formattedTime = `${period}_${formattedHours}:${formattedMinutes}:${seconds}`;
 
     // Generate pid with second-level encryption
     const pid = `job_${Date.now()}_${seconds}`;
