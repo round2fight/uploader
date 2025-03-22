@@ -23,14 +23,10 @@ const FileUpload = () => {
 
   // Handle drag-and-drop or selected files
   const onDrop = (acceptedFiles) => {
-    // const validFiles = acceptedFiles.filter(isValidFile);
-
-    // if (validFiles.length === 0) {
-    //   alert(
-    //     "Only PNG, JPG, JPEG, TXT, DOC, DOCX, PSD, and AI files are allowed."
-    //   );
-    //   return;
-    // }
+    // Log detected MIME types
+    acceptedFiles.forEach((file) => {
+      console.log(`File: ${file.name}, MIME Type: ${file.type}`);
+    });
 
     processFiles(acceptedFiles);
   };
@@ -121,6 +117,22 @@ const FileUpload = () => {
   };
   // Validate file type
   const isValidFile = (file) => {
+    const validExtensionss = [
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".txt",
+      ".doc",
+      ".docx",
+      ".ai",
+      ".psd",
+      ".pdf",
+      ".cdr",
+    ];
+
+    return validExtensionss.some((ext) =>
+      file.name.toLowerCase().endsWith(ext)
+    );
     const validTypes = [
       "image/png",
       "image/jpeg",
