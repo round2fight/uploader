@@ -203,27 +203,29 @@ const FileUpload = () => {
     setUploading(true);
     setUploadProgress(0);
 
-    const timestamp = new Date();
-    const hours = timestamp.getHours();
-    const minutes = timestamp.getMinutes();
-    const seconds = timestamp.getSeconds();
-    const milliseconds = timestamp.getMilliseconds();
+    // Get current time in IST explicitly
+    const ISTTimeString = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
+    const ISTTime = new Date(ISTTimeString);
 
-    const formattedDate = `${String(timestamp.getDate()).padStart(
+    // Format IST time
+    const hours = ISTTime.getHours();
+    const minutes = ISTTime.getMinutes();
+    const seconds = ISTTime.getSeconds();
+    const milliseconds = ISTTime.getMilliseconds();
+
+    const formattedDate = `${String(ISTTime.getDate()).padStart(
       2,
       "0"
-    )}-${String(timestamp.getMonth() + 1).padStart(
+    )}-${String(ISTTime.getMonth() + 1).padStart(
       2,
       "0"
-    )}-${timestamp.getFullYear()}`;
+    )}-${ISTTime.getFullYear()}`;
 
-    // Convert hours to 12-hour format and determine AM/PM
     const period = hours >= 12 ? "PM" : "AM";
-    const formattedHours = hours % 12 === 0 ? "00" : String(hours % 12);
+    const formattedHours = hours % 12 === 0 ? "12" : String(hours % 12);
     const formattedMinutes = String(minutes).padStart(2, "0");
-    const uniqueId = String(milliseconds).padStart(3, "0").substring(0, 2);
-
-    // Create formatted time in AM/PM format
     const formattedTime = `${period}_${formattedHours}:${formattedMinutes}:${seconds}`;
 
     // Generate pid with second-level encryption
